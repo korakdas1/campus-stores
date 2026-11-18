@@ -165,6 +165,32 @@
   const deskTime = () => shifts[s.phase].time;
   const holder = (loan) => loan.custodian || loan.who;
   const expectedBack = (loan) => loan.expected || loan.due;
+  const timeMinutes = {
+    "Fri 8 pm": 20 * 60,
+    "Sat 9 am": 24 * 60 + 9 * 60,
+    "Sat 10 am": 24 * 60 + 10 * 60,
+    "Sat noon": 24 * 60 + 12 * 60,
+  };
+  const deskMinutes = () => [15 * 60 + 45, 19 * 60 + 30, 24 * 60 + 9 * 60][s.phase];
+  function returnStatus(loan) {
+    if (loan.back) return { text: "Returned", tone: "good" };
+    const due = timeMinutes[expectedBack(loan)];
+    if (due !== undefined && deskMinutes() > due) return { text: "Overdue", tone: "danger" };
+    if (due !== undefined && deskMinutes() === due) return { text: "Due now", tone: "warning" };
+    if (due !== undefined && due - deskMinutes() <= 60) return { text: "Due soon", tone: "warning" };
+    return { text: "Not back", tone: "neutral" };
+  }
+  function returnBadge(loan) {
+    const state = returnStatus(loan);
+    return '<span class="tag state-' + state.tone + '">' + esc(state.text) + '</span>';
+  }
+  function shiftProgress() {
+    const film = s.loans.filter((l) => l.req === "RQ-214");
+    if (!film.length) return "Film Society · Pickup not started";
+    if (s.phase === 0) return "Film Society · " + film.length + "/3 issued";
+    const back = film.filter((l) => l.back).length;
+    return "Film Society · " + back + " back · " + film.filter((l) => !l.back).length + " still out";
+  }
   const activity = (text) => {
     s.activity.unshift({ time: deskTime(), text });
     s.activity = s.activity.slice(0, 30);
@@ -297,10 +323,10 @@
     } else {
       const film = requests.find((r) => r.id === "RQ-214");
       html += '<article class="featured-request">' +
-        '<span class="eyebrow">Your current request</span>' +
+        '<span class="eyebrow">Current task · Film Society</span>' +
         '<h3>' + esc(film.event) + '</h3>' +
-        '<p>' + esc(film.club) + ' · 3 approved items · Due ' + esc(film.due) + '</p>' +
-        btn("Review approved kit", "request", film.id, "primary") + '</article>';
+        '<p>3 items to collect · Due ' + esc(film.due) + '</p>' +
+        btn("See approved items", "request", film.id) + '</article>';
       html += '<h3 class="subsection-title">Other approved requests</h3>';
       html += requests.filter((r) => r.id !== "RQ-214")
         .map((r) => row(r.event, r.id + " · " + r.club, btn("View", "request", r.id)))
@@ -340,7 +366,7 @@
       "Issue, track, and safely check in equipment",
       s.editing
         ? btn("Cancel", "cancel")
-        : btn("Issue an item", "new", "", "primary"),
+        : btn("Issue an item", "new", "", s.phase === 0 ? "primary" : ""),
     );
     if (s.editing) {
       const available = assets.filter((a) => !a.repair && !out(a.id));
@@ -369,11 +395,11 @@
           esc("Slip L-" + l.num + " · Request " + l.req + " · Collected by " + l.who +
             " · Currently with " + holder(l)) + '</p></details>' +
           '<form data-verify><input type="hidden" name="slip" value="' + l.num + '">' +
-          '<div class="form"><label><span>Asset ID on the item in front of you</span>' +
+          '<div class="form"><label><span>Asset ID on the item</span>' +
           '<input name="unit" required autocomplete="off" placeholder="e.g. AD-12" aria-describedby="verify-help"></label>' +
-          '<label><span>Returned by</span><select name="returnedBy" required>' +
+          '<label><span>Who brought it back?</span><select name="returnedBy" required>' +
           '<option value="">Select person…</option>' + opts(people.map((p) => [p, p])) +
-          '</select></label></div><p class="field-help" id="verify-help">A different unit must not silently close this slip.</p>' +
+          '</select></label></div><p class="field-help" id="verify-help">Only a matching asset ID closes this loan.</p>' +
           '<p role="alert" class="validation" data-verify-feedback></p>' +
           '<div class="action-row"><button class="primary" type="submit">Confirm verified return</button>' +
           btn("Cancel", "cancel-flow") + '</div></form></div>';
@@ -388,11 +414,11 @@
           '<h3>Who has ' + esc(l.asset) + ' now?</h3>' +
           '<p>Record who has it now and when they will return it.</p>' +
           '<form data-handover><input type="hidden" name="slip" value="' + l.num + '">' +
-          '<div class="form"><label><span>Current holder</span><select name="custodian" required>' +
+          '<div class="form"><label><span>Who has it?</span><select name="custodian" required>' +
           opts(people.map((p) => [p, p])) + '</select></label>' +
-          '<label><span>Expected hand-in</span><select name="expected" required>' +
+          '<label><span>Back by</span><select name="expected" required>' +
           opts(candidates.map((d) => [d, d])) + '</select></label>' +
-          '<label class="full"><span>Handover context</span><textarea name="context" maxlength="300" rows="2" required>' +
+          '<label class="full"><span>Note for next shift</span><textarea name="context" maxlength="300" rows="2" required>' +
           esc(l.handoverNote || "Outstanding after partial return; confirm the physical asset ID on arrival.") +
           '</textarea></label></div><div class="action-row">' +
           '<button class="primary" type="submit">Save linked handover</button>' +
@@ -411,14 +437,14 @@
         l.num + ' · ' + esc(l.req) + '</span><h3>' + esc(a.type) + ' <span class="unit-id">' + esc(l.asset) +
         '</span></h3><p>' + esc(a.model + ' · ' + getReq(l.req).club) +
         '</p><p class="loan-custody">' +
-        (!l.back ? '<strong>With ' + esc(holder(l)) + '</strong> · Expected ' + esc(expectedBack(l)) :
-          'Returned · Originally due ' + esc(l.due)) +
+        (!l.back ? '<strong>With ' + esc(holder(l)) + '</strong> · Back by ' + esc(expectedBack(l)) :
+          'Verified · Returned by ' + esc(l.returnedBy || "unknown")) +
         '</p>' + (l.handoverNote && !l.back ? '<p class="inline-note">Handover: ' + esc(l.handoverNote) + '</p>' : '') +
         (l.back ? '<p class="return-proof">' + esc("Verified by asset ID · Returned by " +
           (l.returnedBy || "not recorded") + " · " + (l.returnedAt || "Earlier shift")) + '</p>' : '') +
         '</div><div class="loan-actions">' +
-        badge(l.back ? "Returned" : "Outstanding", l.back) +
-        (!l.back ? btn("Verify return", "verify", String(l.num), "primary") +
+        returnBadge(l) +
+        (!l.back ? btn("Verify return", "verify", String(l.num)) +
           (s.phase > 0 ? btn("Add handover", "handover", String(l.num)) : "") : "") +
         '</div></article>';
     }
@@ -509,7 +535,8 @@
       q("[data-handover]").elements.namedItem("custodian").value = l.custodian || "Leela Das";
       q("[data-handover]").elements.namedItem("expected").value = l.expected || "Sat 9 am";
     }
-    q("[data-status]").textContent = s.notice;
+    q("[data-status]").textContent = shiftProgress() +
+      (s.notice.startsWith("Sample shift") ? "" : " · " + s.notice);
   }
   function commit(msg) {
     if (msg) s.notice = msg;
