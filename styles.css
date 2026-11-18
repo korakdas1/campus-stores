@@ -1,13 +1,13 @@
 :root {
   color-scheme: light dark;
-  background: light-dark(#f0f2f1, #191e21);
+  background: light-dark(#eef1f2, #151a1d);
 }
 body {
   margin: 0;
   padding: clamp(10px, 3vw, 44px) clamp(6px, 3vw, 36px);
 }
 body > main {
-  max-width: 1060px;
+  max-width: 1080px;
   margin: 0 auto;
 }
 .icon-library {
@@ -23,31 +23,63 @@ body > main {
   stroke-linejoin: round;
 }
 
+/* ===========================================================================
+   Design tokens
+   - Teal/slate  = navigation, selection and the one primary action
+   - Coral       = brand only (logo)
+   - Red         = overdue / something is wrong
+   - Amber       = due soon, and notes written by the desk (shift memo)
+   - Green       = done / back on the shelf
+   ======================================================================== */
 #campus-stores {
   color-scheme: light dark;
-  --ink: light-dark(#202c35, #ecf0f0);
-  --quiet: light-dark(#526370, #b9c5cb);
-  --paper: light-dark(#fff, #232a30);
-  --desk: light-dark(#f3f5f5, #1d2328);
-  --nav: light-dark(#eaf0f1, #29333b);
-  --sel: light-dark(#233e4c, #c5dce4);
-  --inv: light-dark(#fff, #172b34);
-  --line: light-dark(#d2dcdf, #475158);
-  --memo: light-dark(#fff3d8, #3d3426);
-  --memotxt: light-dark(#65491e, #ead4a5);
-  --mark: light-dark(#bd502f, #f2a585);
-  --ok: light-dark(#e3f1e8, #2d4838);
-  --oktxt: light-dark(#25523d, #bedac8);
+  --ink: light-dark(#1d2830, #e8edef);
+  --quiet: light-dark(#5b6b76, #a3b1b8);
+  --faint: light-dark(#63727c, #909fa6);
+  --paper: light-dark(#ffffff, #1d2429);
+  --raised: light-dark(#f6f8f9, #242c32);
+  --desk: light-dark(#f1f4f5, #182024);
+  --nav: light-dark(#f1f4f5, #182024);
+  --line: light-dark(#e0e6e9, #333d44);
+  --line-strong: light-dark(#c4ced3, #4a565e);
+
+  --sel: light-dark(#1f4b5e, #9fd0e2);
+  --inv: light-dark(#ffffff, #0d2029);
+  --sel-soft: light-dark(#e3f0f5, #1f3540);
+  --sel-text: light-dark(#18485c, #b9e0ee);
+  --focus: light-dark(#2a86ad, #74c6e6);
+
+  --mark: light-dark(#c8552f, #ec9a78);
+
+  --memo: light-dark(#fff6e2, #33291b);
+  --memotxt: light-dark(#6a4813, #ecd29c);
+  --memoline: light-dark(#efd9a8, #574628);
+
+  --ok-bg: light-dark(#e4f4ea, #1b3326);
+  --ok-fg: light-dark(#1d6b41, #9ad7b1);
+  --ok-line: light-dark(#bfe2cc, #2e5a40);
+  --warn-bg: light-dark(#fff2d3, #3a2f17);
+  --warn-fg: light-dark(#835600, #f0cd84);
+  --warn-line: light-dark(#f0d595, #5d4b22);
+  --bad-bg: light-dark(#fdeaea, #3f2020);
+  --bad-fg: light-dark(#b3261e, #ffaca5);
+  --bad-line: light-dark(#f4c4c1, #6c2f2b);
+
+  --radius: 10px;
   background: var(--paper);
   color: var(--ink);
   font:
-    14px/1.48 "Inter",
+    14px/1.5 "Inter",
+    "Segoe UI",
+    system-ui,
     "Arial",
     sans-serif;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 16px;
   overflow: hidden;
   container-type: inline-size;
+  box-shadow: 0 1px 2px light-dark(rgb(20 40 50 / 6%), rgb(0 0 0 / 30%)),
+    0 8px 28px light-dark(rgb(20 40 50 / 6%), rgb(0 0 0 / 25%));
 }
 #campus-stores * {
   box-sizing: border-box;
@@ -61,54 +93,77 @@ body > main {
 #campus-stores p {
   margin: 0;
 }
+
+/* ---- Type scale ---------------------------------------------------------- */
 #campus-stores h1 {
   font:
-    600 clamp(24px, 4cqw, 33px)/1.13 "Archivo",
+    650 clamp(22px, 3.6cqw, 30px)/1.15 "Archivo",
+    "Segoe UI",
     system-ui,
     sans-serif;
-  letter-spacing: -0.05em;
+  letter-spacing: -0.03em;
 }
 #campus-stores h2 {
   font-size: 20px;
-  letter-spacing: -0.03em;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
 }
 #campus-stores h3 {
-  font-size: 15px;
+  font-size: 14.5px;
+  font-weight: 650;
 }
 #campus-stores .muted,
 #campus-stores small {
   color: var(--quiet);
 }
 #campus-stores small {
-  font-size: 12px;
+  font-size: 12.5px;
 }
+#campus-stores strong,
+#campus-stores b {
+  font-weight: 650;
+}
+
+/* ---- Exam strip ---------------------------------------------------------- */
 #campus-stores .examstrip {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  gap: 4px 16px;
+  gap: 4px 18px;
   flex-wrap: wrap;
   background: var(--desk);
   border-bottom: 1px solid var(--line);
-  padding: 9px 18px;
+  padding: 9px 20px;
   color: var(--quiet);
   font-size: 13px;
+}
+#campus-stores .examstrip > span {
+  margin-right: auto;
 }
 #campus-stores details[open] {
   width: 100%;
 }
 #campus-stores summary {
   font-weight: 650;
-  color: var(--sel);
+  color: var(--sel-text);
   cursor: pointer;
 }
 #campus-stores .briefcopy {
   color: var(--ink);
   max-width: 79ch;
-  padding: 12px 0 5px;
+  padding: 12px 0 6px;
   display: grid;
   gap: 8px;
 }
+#campus-stores .briefcopy ul {
+  margin: 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 4px;
+}
+
+/* ---- Masthead + shift memo ---------------------------------------------- */
 #campus-stores .mast,
 #campus-stores .brandblock,
 #campus-stores .shift,
@@ -120,18 +175,21 @@ body > main {
   gap: 10px;
 }
 #campus-stores .mast {
-  padding: 17px 20px;
+  padding: 18px 22px;
   justify-content: space-between;
   flex-wrap: wrap;
 }
+#campus-stores .brandblock {
+  gap: 12px;
+}
 #campus-stores .brandmark {
   background: var(--mark);
-  color: var(--inv);
-  width: 40px;
-  height: 40px;
+  color: light-dark(#fff, #2a140b);
+  width: 42px;
+  height: 42px;
   display: grid;
   place-items: center;
-  border-radius: 9px;
+  border-radius: 10px;
 }
 #campus-stores .brandmark svg {
   width: 25px;
@@ -140,22 +198,32 @@ body > main {
 #campus-stores .clock {
   display: grid;
   text-align: right;
+  gap: 1px;
+}
+#campus-stores .clock small {
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-size: 11px;
+  font-weight: 600;
 }
 #campus-stores .clock strong {
+  font-size: 16px;
   font-variant-numeric: tabular-nums;
 }
 #campus-stores .shift {
   background: var(--memo);
   color: var(--memotxt);
-  padding: 12px 19px;
+  padding: 13px 22px;
   justify-content: space-between;
-  border-block: 1px solid var(--line);
+  border-block: 1px solid var(--memoline);
 }
 #campus-stores .shift div {
-  max-width: 67ch;
+  max-width: 68ch;
 }
 #campus-stores .shift b {
-  font-size: 13px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 #campus-stores .shift button {
   background: transparent;
@@ -163,68 +231,136 @@ body > main {
   color: var(--memotxt);
   flex-shrink: 0;
 }
+#campus-stores .shift button:hover {
+  background: light-dark(rgb(106 72 19 / 8%), rgb(236 210 156 / 10%));
+  border-color: var(--memotxt);
+}
+
+/* ---- Controls: three button tiers --------------------------------------- */
 #campus-stores button,
 #campus-stores select,
 #campus-stores input,
 #campus-stores textarea {
   font: inherit;
   color: var(--ink);
-  border: 1px solid var(--line);
-  border-radius: 6px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
   background: var(--paper);
   min-width: 0;
-  padding: 7px 9px;
+  padding: 7px 10px;
 }
 #campus-stores button {
   font-size: 13px;
   font-weight: 600;
+  padding: 7px 13px;
   cursor: pointer;
+  transition:
+    background-color 0.12s,
+    border-color 0.12s;
 }
 #campus-stores button:hover {
   border-color: var(--sel);
+  background: var(--sel-soft);
 }
+/* Tier 1: the one action that moves the job forward */
 #campus-stores .primary {
   background: var(--sel);
   color: var(--inv);
   border-color: var(--sel);
 }
+#campus-stores .primary:hover {
+  background: light-dark(#173a49, #b8def0);
+  border-color: light-dark(#173a49, #b8def0);
+}
+/* Tier 3: quiet text actions */
+#campus-stores .ghost,
+#campus-stores .linkish {
+  border-color: transparent;
+  background: transparent;
+  color: var(--sel-text);
+}
+#campus-stores .ghost:hover,
+#campus-stores .linkish:hover {
+  background: var(--sel-soft);
+  border-color: transparent;
+}
+#campus-stores .linkish {
+  padding: 4px 8px;
+  margin-left: -8px;
+}
 #campus-stores :is(button, input, textarea, select, summary):focus-visible {
-  outline: 3px solid var(--mark);
+  outline: 3px solid var(--focus);
   outline-offset: 2px;
 }
+
+/* ---- Shell + navigation -------------------------------------------------- */
 #campus-stores .shell {
   display: grid;
-  grid-template-columns: 155px minmax(0, 1fr);
-  min-height: 315px;
+  grid-template-columns: 184px minmax(0, 1fr);
+  min-height: 340px;
 }
 #campus-stores nav {
   background: var(--nav);
   border-right: 1px solid var(--line);
-  padding: 12px 8px;
+  padding: 14px 10px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 #campus-stores nav button {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 9px;
   text-align: left;
-  border: 1px solid transparent;
+  border: 0;
   background: transparent;
-  font-weight: 500;
+  font-weight: 550;
+  color: var(--quiet);
+  padding: 8px 10px;
+  position: relative;
+}
+#campus-stores nav button:hover {
+  background: light-dark(rgb(31 75 94 / 6%), rgb(159 208 226 / 7%));
+  color: var(--ink);
 }
 #campus-stores nav button[aria-pressed="true"] {
+  background: var(--sel-soft);
+  color: var(--sel-text);
+  font-weight: 650;
+}
+#campus-stores nav button[aria-pressed="true"]::before {
+  content: "";
+  position: absolute;
+  left: -10px;
+  top: 7px;
+  bottom: 7px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
   background: var(--sel);
-  color: var(--inv);
+}
+#campus-stores nav button span {
+  white-space: nowrap;
 }
 #campus-stores nav svg {
   width: 16px;
   height: 16px;
   flex-shrink: 0;
 }
+#campus-stores nav .count {
+  margin-left: auto;
+  background: var(--bad-fg);
+  color: var(--paper);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  min-width: 20px;
+  padding: 1px 6px;
+  text-align: center;
+}
+
+/* ---- Page + section head ------------------------------------------------- */
 #campus-stores .page {
-  padding: 17px 17px 20px;
+  padding: 20px 22px 24px;
   min-width: 0;
 }
 #campus-stores .sectionhead,
@@ -233,63 +369,399 @@ body > main {
   flex-wrap: wrap;
 }
 #campus-stores .sectionhead {
-  margin-bottom: 12px;
+  margin-bottom: 14px;
+  align-items: flex-start;
 }
 #campus-stores .sectionhead small {
-  margin-top: 2px;
+  margin-top: 3px;
   display: block;
 }
+#campus-stores .subhead {
+  margin: 24px 0 8px;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--faint);
+}
+
+/* ---- Lists --------------------------------------------------------------- */
 #campus-stores .row {
   border-top: 1px solid var(--line);
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
+  gap: 10px;
+  padding: 11px 0;
+}
+#campus-stores .row:last-child {
+  border-bottom: 1px solid var(--line);
+}
+#campus-stores .row strong {
+  display: flex;
+  align-items: center;
   gap: 8px;
-  padding: 9px 0;
+  flex-wrap: wrap;
 }
 #campus-stores .row small,
 #campus-stores label span {
   display: block;
 }
+#campus-stores .side {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ---- Status tags: soft fill + matching border + dot ---------------------- */
 #campus-stores .tag {
-  background: var(--desk);
-  color: var(--quiet);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
   font-size: 12px;
-  padding: 3px 7px;
-  border-radius: 5px;
+  font-weight: 600;
+  line-height: 1.2;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--quiet);
+}
+#campus-stores .tag:is(.good, .soon, .late)::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+#campus-stores .tag.good {
+  background: var(--ok-bg);
+  color: var(--ok-fg);
+  border-color: var(--ok-line);
+}
+#campus-stores .tag.soon {
+  background: var(--warn-bg);
+  color: var(--warn-fg);
+  border-color: var(--warn-line);
+}
+#campus-stores .tag.late {
+  background: var(--bad-bg);
+  color: var(--bad-fg);
+  border-color: var(--bad-line);
+}
+#campus-stores .tag.ref {
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  font-weight: 600;
+  font-size: 11.5px;
+  border-radius: 6px;
+  padding: 2px 7px;
+}
+
+/* ---- Asset label: looks like the sticker on the physical unit ----------- */
+#campus-stores .assetid {
   display: inline-block;
+  font:
+    700 12px/1.3 ui-monospace,
+    "Cascadia Mono",
+    Consolas,
+    monospace;
+  letter-spacing: 0.03em;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line-strong);
+  border-radius: 5px;
+  padding: 2px 6px;
+  white-space: nowrap;
 }
-#campus-stores .good {
-  background: var(--ok);
-  color: var(--oktxt);
+#campus-stores .assetid.big {
+  font-size: 18px;
+  padding: 6px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 7px;
+  box-shadow: 0 1px 0 var(--line-strong);
 }
+
+/* ---- Cards --------------------------------------------------------------- */
 #campus-stores .record {
-  margin-top: 14px;
-  padding: 12px 13px;
-  background: var(--desk);
-  border-left: 3px solid var(--sel);
+  margin-top: 10px;
+  padding: 13px 15px;
+  background: var(--raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
 }
 #campus-stores .record p {
   margin-top: 5px;
 }
+#campus-stores .record.from-club {
+  border-left: 3px solid var(--sel);
+}
+#campus-stores .record.from-desk {
+  border-left: 3px solid var(--memoline);
+  background: var(--memo);
+}
+#campus-stores .record.from-desk :is(h3, p) {
+  color: var(--memotxt);
+}
+#campus-stores .record.auto {
+  border-left: 3px solid var(--line-strong);
+}
+#campus-stores .recordhead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+#campus-stores .request-card h3 {
+  font-size: 18px;
+  letter-spacing: -0.01em;
+  margin-top: 2px;
+}
+#campus-stores .facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+  margin-top: 6px;
+  color: var(--quiet);
+}
+#campus-stores .facts b {
+  color: var(--ink);
+}
+
+/* ---- Panels (forms and the active task) --------------------------------- */
+#campus-stores .panel {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-top: 16px;
+  background: var(--raised);
+}
+#campus-stores .panel > h3 {
+  font-size: 15.5px;
+}
+#campus-stores .panel .form {
+  margin-bottom: 8px;
+}
+#campus-stores .panel .buttons {
+  margin-bottom: 0;
+}
+#campus-stores .panel.task {
+  border: 1.5px solid var(--sel);
+  background: var(--paper);
+  box-shadow: 0 0 0 4px var(--sel-soft);
+}
+#campus-stores .labelcheck {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 2px 0 10px;
+}
+#campus-stores .labelcheck > div {
+  flex: 1 1 200px;
+  font-size: 16px;
+}
+#campus-stores .labelcheck small {
+  display: block;
+  font-size: 13px;
+}
+#campus-stores .hint,
+#campus-stores .checkline {
+  display: flex;
+  gap: 7px;
+  align-items: flex-start;
+}
+#campus-stores .hint {
+  color: var(--quiet);
+  font-size: 13px;
+  margin: 4px 0 10px;
+}
+#campus-stores .hint.warn {
+  color: var(--warn-fg);
+}
+#campus-stores :is(.hint, .checkline, .flag, .formerror) svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+#campus-stores .flag,
+#campus-stores .formerror {
+  display: flex;
+  gap: 7px;
+  align-items: flex-start;
+  background: var(--bad-bg);
+  color: var(--bad-fg);
+  border: 1px solid var(--bad-line);
+  border-radius: 8px;
+  padding: 7px 10px;
+  margin: 8px 0;
+  font-size: 13px;
+}
+#campus-stores .formerror {
+  font-weight: 600;
+}
+
+/* ---- Loan slips ---------------------------------------------------------- */
+#campus-stores .slip {
+  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px 14px;
+  align-items: start;
+  padding: 14px 0;
+}
+#campus-stores .slip:last-of-type {
+  border-bottom: 1px solid var(--line);
+}
+#campus-stores .slip.is-late {
+  box-shadow: inset 3px 0 var(--bad-fg);
+  background: linear-gradient(90deg, var(--bad-bg), transparent 55%);
+  padding-left: 14px;
+}
+#campus-stores .sliptitle {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 9px;
+  font-size: 15px;
+}
+#campus-stores .slipno {
+  font-size: 12.5px;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+#campus-stores .slipmain small {
+  display: block;
+  margin-top: 2px;
+}
+#campus-stores .slipmain .holder {
+  color: var(--ink);
+  font-size: 13.5px;
+  margin-top: 6px;
+}
+/* Who has it: person icon + name, previous holder faint */
+#campus-stores .who {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+  color: var(--ink);
+}
+#campus-stores .who svg {
+  width: 14px;
+  height: 14px;
+  color: var(--quiet);
+  flex-shrink: 0;
+}
+#campus-stores .who .from {
+  color: var(--faint);
+  font-size: 12px;
+}
+/* Progressive disclosure: secondary facts stay one click away */
+#campus-stores details.more {
+  margin-top: 4px;
+}
+#campus-stores details.more > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  list-style: none;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--faint);
+  border-radius: 6px;
+  padding: 2px 6px;
+  margin-left: -6px;
+}
+#campus-stores details.more > summary::-webkit-details-marker {
+  display: none;
+}
+#campus-stores details.more > summary::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform 0.12s;
+}
+#campus-stores details.more[open] > summary::before {
+  transform: rotate(45deg);
+}
+#campus-stores details.more > summary:hover {
+  background: var(--sel-soft);
+  color: var(--sel-text);
+}
+#campus-stores details.more ul {
+  margin: 4px 0 0;
+  padding-left: 16px;
+  color: var(--quiet);
+  font-size: 12.5px;
+  display: grid;
+  gap: 2px;
+}
+#campus-stores details.fold {
+  margin: 14px 0 0;
+}
+#campus-stores details.fold > summary {
+  font-size: 13px;
+}
+#campus-stores .slip > .actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+#campus-stores .slip > .panel {
+  grid-column: 1 / -1;
+  margin-top: 4px;
+}
+
+/* ---- Toggle group -------------------------------------------------------- */
 #campus-stores .buttons {
   flex-wrap: wrap;
-  margin: 10px 0;
+  margin: 12px 0;
 }
-#campus-stores .buttons button[aria-pressed="true"] {
-  background: var(--sel);
-  color: var(--inv);
+#campus-stores .segmented {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  background: var(--desk);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  margin: 0 0 12px;
+}
+#campus-stores .segmented button {
+  border: 0;
+  background: transparent;
+  color: var(--quiet);
+  padding: 5px 13px;
+  border-radius: 7px;
+}
+#campus-stores .segmented button[aria-pressed="true"] {
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 1px 2px light-dark(rgb(20 40 50 / 12%), rgb(0 0 0 / 40%));
 }
 #campus-stores .buttons label {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   align-items: center;
+  color: var(--quiet);
+  font-weight: 600;
 }
+
+/* ---- Forms --------------------------------------------------------------- */
 #campus-stores .form {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  margin: 10px 0;
+  gap: 12px;
+  margin: 12px 0;
 }
 #campus-stores .form label {
   font-size: 13px;
@@ -297,7 +769,7 @@ body > main {
   min-width: 0;
 }
 #campus-stores .form label span {
-  margin-bottom: 3px;
+  margin-bottom: 4px;
 }
 #campus-stores .form :is(select, input, textarea) {
   width: 100%;
@@ -309,20 +781,126 @@ body > main {
 #campus-stores textarea {
   resize: vertical;
 }
+#campus-stores .checkrow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+  gap: 8px 14px;
+  align-items: center;
+  padding: 11px 0;
+  border-top: 1px solid var(--line);
+}
+#campus-stores .checkrow.stacked {
+  grid-template-columns: minmax(0, 1fr);
+}
+#campus-stores .checkrow.stacked > .stillout {
+  margin-left: 28px;
+}
+#campus-stores .checkrow select {
+  width: 100%;
+}
+#campus-stores .checkrow .form {
+  margin: 0;
+}
+#campus-stores .stillout {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-line);
+}
+#campus-stores .stillout label span {
+  color: var(--warn-fg);
+}
+#campus-stores .tick {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  cursor: pointer;
+}
+#campus-stores .tick input {
+  width: 18px;
+  height: 18px;
+  margin: 2px 0 0;
+  flex-shrink: 0;
+  accent-color: var(--sel);
+}
+#campus-stores .tick strong {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+#campus-stores .tick small {
+  display: block;
+}
+#campus-stores .sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---- Desk book snapshot -------------------------------------------------- */
+#campus-stores .snapshot {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px 16px;
+  background: var(--raised);
+  margin-bottom: 8px;
+}
+#campus-stores .snapshot ul {
+  list-style: none;
+  margin: 8px 0;
+  padding: 0;
+}
+#campus-stores .snapshot li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-top: 1px solid var(--line);
+}
+#campus-stores .snapshot li strong {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+#campus-stores .snapshot li small {
+  display: block;
+}
+#campus-stores .snapshot > p {
+  margin: 6px 0;
+}
+#campus-stores .empty {
+  color: var(--quiet);
+  padding: 18px 0;
+}
+
+/* ---- Status bar ---------------------------------------------------------- */
 #campus-stores .statusbar {
   background: var(--desk);
   border-top: 1px solid var(--line);
-  padding: 8px 16px;
+  padding: 9px 20px;
   color: var(--quiet);
-  font-size: 12px;
+  font-size: 12.5px;
 }
 #campus-stores .statusbar span {
   flex: 1 1 160px;
 }
 #campus-stores .statusbar button {
   font-size: 12px;
+  padding: 5px 11px;
   background: transparent;
 }
+#campus-stores .statusbar .undo {
+  border-color: var(--sel);
+  color: var(--sel-text);
+}
+
+/* ---- Narrow containers --------------------------------------------------- */
 @container (max-width:650px) {
   #campus-stores .shell {
     grid-template-columns: minmax(0, 1fr);
@@ -332,24 +910,45 @@ body > main {
     border-bottom: 1px solid var(--line);
     flex-direction: row;
     flex-wrap: wrap;
-    padding: 7px;
+    padding: 8px;
   }
   #campus-stores nav button {
-    gap: 4px;
-    padding: 5px 7px;
+    gap: 5px;
+    padding: 6px 9px;
+  }
+  #campus-stores nav button[aria-pressed="true"]::before {
+    left: 9px;
+    right: 9px;
+    top: auto;
+    bottom: -8px;
+    width: auto;
+    height: 3px;
+    border-radius: 3px 3px 0 0;
+  }
+  #campus-stores nav .count {
+    margin-left: 4px;
   }
   #campus-stores .shift {
     flex-wrap: wrap;
   }
   #campus-stores .page {
-    padding: 14px 12px;
+    padding: 16px 14px 20px;
   }
   #campus-stores .mast {
-    padding: 12px;
+    padding: 14px;
   }
   #campus-stores .examstrip,
   #campus-stores .shift {
-    padding: 9px 12px;
+    padding: 10px 14px;
+  }
+  #campus-stores .checkrow {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  #campus-stores .slip > .actions {
+    justify-content: flex-start;
+  }
+  #campus-stores .checkrow > :not(.tick) {
+    margin-left: 28px;
   }
 }
 @container (max-width:420px) {
@@ -360,7 +959,10 @@ body > main {
     display: none;
   }
   #campus-stores .row {
-    gap: 5px;
+    gap: 6px;
+  }
+  #campus-stores .clock {
+    text-align: left;
   }
 }
 @media (pointer: coarse) {
@@ -369,641 +971,68 @@ body > main {
     min-height: 44px;
   }
 }
-
-
-/* Product-engineering work sample: legible, task-first counter experience */
-:root { background: #edf2f6; }
-body {
-  background: radial-gradient(circle at 15% 0%, #d9edf0 0, transparent 35%),
-              linear-gradient(135deg, #f0f4f7, #eaf0f5);
-  min-height: 100vh;
-}
-body > main { max-width: 1180px; }
-#campus-stores {
-  color-scheme: light;
-  --ink: #1a3040;
-  --quiet: #617689;
-  --paper: #fff;
-  --desk: #f7f9fc;
-  --nav: #f0f5f8;
-  --sel: #196a73;
-  --inv: #fff;
-  --line: #dbe5ed;
-  --memo: #ecf9f3;
-  --memotxt: #205d55;
-  --mark: #f0a56e;
-  --ok: #e2f6e9;
-  --oktxt: #1d774d;
-  border: 1px solid #d2dde6;
-  border-radius: 20px;
-  box-shadow: 0 20px 65px rgba(26, 49, 70, .12);
-  font: 14px/1.55 "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-}
-#campus-stores .examstrip {
-  padding: 11px 27px;
-  border-bottom: 1px solid #dae6ed;
-  background: #f6f9fc;
-}
-#campus-stores .examstrip > span {
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-}
-#campus-stores summary { color: #176c76; }
-#campus-stores .mast {
-  padding: 29px 30px;
-  background: linear-gradient(120deg, #172d45, #204b5c);
-  color: #fff;
-}
-#campus-stores .mast h1 { font-size: clamp(29px, 4cqw, 40px); letter-spacing: -.055em; }
-#campus-stores .mast .muted { color: #bdd4db; }
-#campus-stores .brandmark {
-  width: 50px;
-  height: 50px;
-  border-radius: 14px;
-  background: #f0a56e;
-  color: #173044;
-  box-shadow: 0 8px 20px rgba(0,0,0,.16);
-}
-#campus-stores .clock {
-  padding: 10px 17px;
-  border: 1px solid rgba(255,255,255,.23);
-  background: rgba(255,255,255,.07);
-  border-radius: 12px;
-}
-#campus-stores .clock small { color: #b7d0d8; }
-#campus-stores .clock strong { font-size: 16px; }
-#campus-stores .shift {
-  padding: 17px 29px;
-  gap: 24px;
-  background: var(--memo);
-  border-block: 0;
-  border-bottom: 1px solid #cfe5d9;
-}
-#campus-stores .shift b { display: block; font-size: 16px; }
-#campus-stores .shift p { margin-top: 5px; }
-#campus-stores .shift button {
-  color: #fff;
-  background: #1f726a;
-  border-color: #1f726a;
-  box-shadow: 0 3px 9px rgba(31,114,106,.16);
-}
-#campus-stores .metrics {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  background: #fff;
-  border-bottom: 1px solid var(--line);
-}
-#campus-stores .metric {
-  min-height: 93px;
-  padding: 18px 25px;
-  display: grid;
-  align-content: center;
-  gap: 4px;
-}
-#campus-stores .metric + .metric { border-left: 1px solid var(--line); }
-#campus-stores .metric small {
-  font-size: 11px;
-  letter-spacing: .05em;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-#campus-stores .metric strong {
-  font-size: 28px;
-  font-weight: 750;
-  letter-spacing: -.04em;
-  line-height: 1.1;
-  color: #173d50;
-  font-variant-numeric: tabular-nums;
-}
-#campus-stores .metric strong span { font-size: 15px; color: #8b9daa; }
-#campus-stores .priority {
-  margin: 18px 25px 0;
-  padding: 15px 19px;
-  border: 1px solid #efd8aa;
-  border-left: 4px solid #dda24b;
-  border-radius: 12px;
-  background: #fff9eb;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-#campus-stores .priority strong { display: block; font-size: 16px; }
-#campus-stores .priority p { margin-top: 4px; color: #6d5f49; }
-#campus-stores .eyebrow {
-  display: inline-block;
-  margin-bottom: 5px;
-  font-size: 10px;
-  line-height: 1.5;
-  font-weight: 800;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  color: #66808b;
-}
-#campus-stores .shell {
-  grid-template-columns: 190px minmax(0, 1fr);
-  min-height: 440px;
-}
-#campus-stores nav {
-  gap: 6px;
-  padding: 22px 12px;
-  background: #f3f7fa;
-}
-#campus-stores nav button {
-  padding: 11px 13px;
-  border-radius: 9px;
-  transition: background-color .15s, color .15s;
-}
-#campus-stores nav button:hover { background: #e4eef3; }
-#campus-stores nav button[aria-pressed="true"] {
-  background: #174b59;
-  color: #fff;
-  box-shadow: 0 3px 9px rgba(23,75,89,.12);
-}
-#campus-stores .page { padding: 26px 29px 35px; }
-#campus-stores .sectionhead {
-  margin-bottom: 17px;
-  gap: 12px;
-}
-#campus-stores .sectionhead h2 { font-size: 23px; font-weight: 750; }
-#campus-stores .sectionhead small { margin-top: 3px; }
-#campus-stores button,
-#campus-stores input,
-#campus-stores select,
-#campus-stores textarea {
-  border-radius: 8px;
-  padding: 9px 11px;
-}
-#campus-stores button { transition: background-color .15s, border-color .15s, transform .15s; }
-#campus-stores button:hover { transform: translateY(-1px); }
-#campus-stores .primary {
-  color: #fff;
-  background: #196a73;
-  border-color: #196a73;
-}
-#campus-stores .primary:hover { background: #12545b; border-color: #12545b; }
-#campus-stores :is(button, input, textarea, select, summary):focus-visible {
-  outline: 3px solid #e4a357;
-  outline-offset: 3px;
-}
-#campus-stores .row { padding: 15px 6px; }
-#campus-stores .row strong { font-size: 14px; }
-#campus-stores .tag {
-  padding: 4px 9px;
-  border-radius: 999px;
-  font-weight: 700;
-}
-#campus-stores .workflow-panel {
-  padding: 22px;
-  margin: 0 0 21px;
-  border-radius: 12px;
-  background: #f0f7f9;
-  border: 1px solid #cbdee4;
-}
-#campus-stores .workflow-panel h3 { font-size: 18px; margin-bottom: 9px; }
-#campus-stores .workflow-panel p { color: #466471; }
-#campus-stores .workflow-panel .form { margin-top: 18px; }
-#campus-stores .workflow-panel label span { margin-bottom: 5px; }
-#campus-stores .workflow-panel :is(input, select, textarea) {
-  min-height: 41px;
-  border-color: #b9cbd4;
-}
-#campus-stores .field-help { font-size: 12px; margin: 6px 0 14px !important; }
-#campus-stores .validation {
-  color: #a02d24 !important;
-  font-weight: 700;
-  margin-bottom: 12px !important;
-}
-#campus-stores .validation:empty { display: none; }
-#campus-stores .action-row { display: flex; gap: 9px; flex-wrap: wrap; }
-#campus-stores .loan-card {
-  padding: 18px 17px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 18px;
-  margin: 11px 0;
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  box-shadow: 0 3px 10px rgba(30, 60, 79, .03);
-}
-#campus-stores .loan-card h3 {
-  font-size: 16px;
-  margin-bottom: 4px;
-}
-#campus-stores .loan-details { min-width: 0; }
-#campus-stores .loan-details p { margin-top: 5px; color: #607588; }
-#campus-stores .loan-actions {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 7px;
-  flex-shrink: 0;
-}
-#campus-stores .loan-actions button { width: 130px; }
-#campus-stores .inline-note {
-  padding: 7px 9px;
-  margin-top: 10px !important;
-  border-radius: 7px;
-  background: #fff6db;
-  color: #73582e !important;
-}
-#campus-stores .return-proof {
-  color: #237049 !important;
-  font-weight: 650;
-}
-#campus-stores .empty-state {
-  border: 1px dashed #c8d5df;
-  padding: 24px;
-  color: #647787;
-  text-align: center;
-  border-radius: 10px;
-  background: #f8fafc;
-}
-#campus-stores .activity {
-  margin: 16px 0;
-  padding: 17px;
-  border: 1px solid #d9e6ec;
-  background: #f5f9fb;
-  border-radius: 11px;
-}
-#campus-stores .activity h3 { margin-bottom: 8px; }
-#campus-stores .activity p { padding: 7px 0; border-top: 1px solid #e0e9ee; }
-#campus-stores .record {
-  padding: 16px;
-  border-radius: 8px;
-  border-left: 4px solid #2f7b80;
-}
-#campus-stores .statusbar { padding: 12px 23px; }
-#campus-stores .statusbar [role="status"] { font-weight: 600; }
-@container (max-width: 650px) {
-  #campus-stores .shell { grid-template-columns: minmax(0, 1fr); }
-  #campus-stores nav { padding: 11px; flex-direction: row; flex-wrap: wrap; }
-  #campus-stores nav button { padding: 9px 11px; }
-  #campus-stores .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  #campus-stores .metric:nth-child(3) { border-left: 0; }
-  #campus-stores .metric:nth-child(n+3) { border-top: 1px solid var(--line); }
-  #campus-stores .metric { padding: 15px 18px; min-height: 80px; }
-  #campus-stores .priority { flex-wrap: wrap; margin: 12px 12px 0; }
-  #campus-stores .page { padding: 18px 14px 24px; }
-  #campus-stores .mast { padding: 22px 17px; }
-  #campus-stores .shift { padding: 15px 16px; }
-}
-@container (max-width: 420px) {
-  #campus-stores .form { grid-template-columns: 1fr; }
-  #campus-stores .loan-card { flex-direction: column; }
-  #campus-stores .loan-actions { flex-direction: row; flex-wrap: wrap; align-items: center; }
-  #campus-stores .loan-actions button { width: auto; }
-  #campus-stores .metric { padding: 14px 12px; }
-  #campus-stores .priority { padding: 14px; }
-}
 @media (prefers-reduced-motion: reduce) {
-  #campus-stores button, #campus-stores nav button { transition: none; }
-  #campus-stores button:hover { transform: none; }
+  #campus-stores * {
+    transition: none !important;
+  }
 }
 
-
-/* Three-second hierarchy: phase → next action → supporting detail. */
-#campus-stores .shift {
-  align-items: center;
-  gap: clamp(16px, 3cqw, 40px);
-  padding: 21px 29px;
-  background: #eff7f4;
-}
-#campus-stores .shift-lead { flex: 1; min-width: 0; }
-#campus-stores .shift-meta {
+/* Guided work hierarchy: one next action, supporting details only after it. */
+#campus-stores .action-guide {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 9px;
-  margin-bottom: 8px;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--line-strong);
+  background: var(--sel-soft);
 }
-#campus-stores .shift-step {
-  font-size: 10px;
-  line-height: 1;
-  font-weight: 800;
-  letter-spacing: .12em;
-  color: #12635c;
-  background: #d8ebe4;
-  padding: 7px 9px;
-  border-radius: 6px;
-}
-#campus-stores .shift-stage {
-  font-size: 12px;
-  font-weight: 650;
-  color: #57776f;
-}
-#campus-stores .shift h2 {
-  font-size: clamp(20px, 3cqw, 27px);
-  font-weight: 800;
-  letter-spacing: -.035em;
-  line-height: 1.2;
-  color: #153c37;
-}
-#campus-stores .shift-summary {
-  color: #42665f;
-  margin-top: 6px;
-  max-width: 62ch;
-}
-#campus-stores .shift-context { margin-top: 11px; }
-#campus-stores .shift-context summary {
-  width: fit-content;
-  font-size: 12px;
-  font-weight: 600;
-  color: #376a64;
-}
-#campus-stores .shift-context[open] p {
-  margin-top: 8px;
-  max-width: 68ch;
-  font-size: 13px;
-  color: #456e65;
-}
-#campus-stores .shift-actions {
-  display: flex;
-  align-items: stretch;
-  flex-direction: column;
-  gap: 6px;
-  width: min(220px, 36%);
-  flex-shrink: 0;
-}
-#campus-stores .shift-actions .primary {
-  min-height: 46px;
-  font-size: 14px;
-  border-radius: 9px;
-  padding: 11px 17px;
-  white-space: normal;
-  color: #fff;
-  background: #176a60;
-  border-color: #176a60;
-}
-#campus-stores .shift-actions .primary:hover {
-  background: #10574f;
-  border-color: #10574f;
-}
-#campus-stores .shift-actions .skip-action {
-  background: transparent;
-  color: #58796f;
-  border: 1px solid transparent;
-  box-shadow: none;
-  padding: 5px;
-  font-size: 11px;
-  font-weight: 500;
-}
-#campus-stores .shift-actions .skip-action:hover {
-  border-color: #c1dcd1;
-  color: #24574f;
-}
-#campus-stores .metrics {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  background: #f8fafc;
-}
-#campus-stores .metric {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  min-height: 58px;
-  padding: 10px 14px;
-}
-#campus-stores .metric strong {
-  font-size: 21px;
-  font-weight: 800;
-  color: #285064;
-}
-#campus-stores .metric span {
-  color: #667b89;
-  font-size: 12px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-#campus-stores .priority {
-  margin: 11px 24px 0;
-  padding: 10px 15px;
-  border: 1px solid #ecd9ac;
-  border-radius: 10px;
-  background: #fffaf0;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 12px 18px;
-}
-#campus-stores .priority-heading {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 12px;
-  color: #775c26;
-  white-space: nowrap;
-}
-#campus-stores .attention-dot {
-  width: 8px;
-  height: 8px;
-  background: #d59c2e;
-  border-radius: 50%;
-}
-#campus-stores .priority-count {
-  display: inline-grid;
-  place-items: center;
-  background: #f4e5c3;
-  color: #775c26;
-  font-size: 11px;
-  font-weight: 800;
-  min-width: 18px;
-  min-height: 18px;
-  border-radius: 5px;
-}
-#campus-stores .priority-list {
-  display: flex;
-  gap: 7px;
-  flex-wrap: wrap;
-}
-#campus-stores .priority-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  color: #76613d;
-  font-size: 12px;
-  background: #fff;
-  border: 1px solid #f0e2c6;
-  padding: 4px 7px;
-  border-radius: 6px;
-}
-#campus-stores .priority-item span { color: #6b665d; }
-#campus-stores .featured-request {
-  display: grid;
-  justify-items: start;
-  gap: 7px;
-  padding: 22px;
-  margin-bottom: 21px;
-  border: 1px solid #cddfdf;
-  border-radius: 12px;
-  background: linear-gradient(110deg, #eff8f8, #f9fcfc);
-}
-#campus-stores .featured-request h3 {
-  font-size: 20px;
-  line-height: 1.25;
-  letter-spacing: -.025em;
-}
-#campus-stores .featured-request p { color: #52707b; }
-#campus-stores .featured-request button { margin-top: 7px; }
-#campus-stores .subsection-title {
-  margin: 15px 0 9px;
-  color: #647b89;
-  font-size: 12px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: .08em;
-}
-#campus-stores .loan-card { align-items: center; }
-#campus-stores .loan-card h3 {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  font-size: 16px;
-}
-#campus-stores .unit-id {
-  display: inline-block;
+#campus-stores .action-guide-copy { min-width: 0; }
+#campus-stores .guide-kicker {
+  display: block;
   font-size: 11px;
   line-height: 1.3;
-  letter-spacing: .035em;
-  font-weight: 800;
-  color: #2e6e74;
-  background: #e4f3f3;
-  border: 1px solid #cce4e3;
-  border-radius: 5px;
-  padding: 4px 7px;
-}
-#campus-stores .loan-card .loan-custody {
-  margin-top: 9px;
-  color: #3c6471;
-  font-size: 12px;
-}
-#campus-stores .loan-custody strong { color: #274e5c; }
-#campus-stores .loan-actions .primary { background: #216c72; border-color: #216c72; }
-#campus-stores .loan-actions button:not(.primary) {
-  background: transparent;
-  border-color: transparent;
-  color: #577b87;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-#campus-stores .verification-target {
-  margin: 14px 0;
-  padding: 13px 17px;
-  border: 1px solid #acd0ca;
-  border-radius: 9px;
-  background: #fff;
-  display: grid;
-  gap: 2px;
-  width: fit-content;
-  min-width: min(100%, 240px);
-}
-#campus-stores .verification-target small {
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: .1em;
-  color: #597c75;
-}
-#campus-stores .verification-target strong {
-  font-size: 28px;
-  letter-spacing: .025em;
-  color: #1b554c;
-  line-height: 1.2;
-}
-#campus-stores .verification-target span {
-  color: #607984;
-  font-size: 12px;
-}
-#campus-stores .detail-disclosure {
-  font-size: 12px;
-  margin: 10px 0 15px;
-}
-#campus-stores .detail-disclosure summary { width: fit-content; font-weight: 650; }
-#campus-stores .detail-disclosure p { margin-top: 7px; }
-#campus-stores .workflow-panel > h3 { font-size: 19px; }
-#campus-stores .workflow-panel .form label span {
-  font-weight: 700;
-  font-size: 12px;
-}
-#campus-stores .workflow-panel button.primary {
-  min-height: 42px;
-  padding-inline: 17px;
-}
-@container (max-width: 650px) {
-  #campus-stores .shift { align-items: flex-start; }
-  #campus-stores .shift-actions {
-    width: auto;
-    min-width: 180px;
-  }
-  #campus-stores .metric { padding: 9px; min-height: 55px; }
-}
-@container (max-width: 480px) {
-  #campus-stores .shift { flex-direction: column; gap: 13px; }
-  #campus-stores .shift-actions { width: 100%; }
-  #campus-stores .shift-actions .primary { min-height: 45px; }
-  #campus-stores .shift-context { margin-top: 8px; }
-  #campus-stores .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  #campus-stores .metric { padding: 9px 6px; }
-  #campus-stores .metric:nth-child(3) { grid-column: 1 / -1; }
-  #campus-stores .metric span { white-space: normal; }
-  #campus-stores .featured-request { padding: 17px; }
-  #campus-stores .featured-request h3 { font-size: 18px; }
-  #campus-stores .priority { margin: 9px 12px 0; padding: 10px; }
-}
-
-/* Scan states before details: visible by the item name even on narrow screens. */
-#campus-stores .loan-card h3 { gap: 7px; }
-#campus-stores .loan-card h3 .tag { font-size: 10px; letter-spacing: .01em; }
-#campus-stores .tag.state-good {
-  background: #e0f5e8;
-  border: 1px solid #c2e5ce;
-  color: #17613c;
-}
-#campus-stores .tag.state-neutral {
-  background: #edf2f6;
-  border: 1px solid #dce5ec;
-  color: #455e6f;
-}
-#campus-stores .tag.state-warning {
-  background: #fff1d8;
-  border: 1px solid #f3d9a5;
-  color: #82521a;
-}
-#campus-stores .tag.state-danger {
-  background: #ffebe7;
-  border: 1px solid #f7cdc5;
-  color: #a33127;
-}
-#campus-stores .loan-actions button[data-action="verify"] {
-  background: #edf6f8;
-  color: #174c5a;
-  border: 1px solid #b8d7db;
   font-weight: 750;
-  text-decoration: none;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--sel-text);
 }
-#campus-stores .loan-actions button[data-action="verify"]:hover {
-  background: #dceef0;
-  border-color: #87b9c1;
+#campus-stores .action-guide strong {
+  display: block;
+  margin-top: 3px;
+  font-size: clamp(16px, 2.1cqw, 19px);
+  line-height: 1.24;
+  letter-spacing: -.02em;
+  color: var(--ink);
 }
-#campus-stores .loan-actions button[data-action="handover"] {
-  font-size: 12px;
-  text-decoration: underline;
-  background: transparent;
-  border-color: transparent;
+#campus-stores .action-guide p {
+  margin-top: 4px;
+  max-width: 65ch;
+  font-size: 12.5px;
+  color: var(--quiet);
 }
-#campus-stores .featured-request button {
-  background: transparent;
-  color: #1b5863;
-  border-color: #bdd6dc;
+#campus-stores .action-guide button {
+  min-width: 166px;
+  min-height: 44px;
+  padding: 10px 17px;
+  flex-shrink: 0;
+  border-radius: 9px;
 }
-#campus-stores .featured-request button:hover { background: #e6f3f5; }
-#campus-stores .statusbar [role="status"] {
-  color: #355e70;
+#campus-stores .panel.check input[name="assetId"] {
+  width: 100%;
+  font-weight: 750;
+  letter-spacing: .045em;
+  text-transform: uppercase;
   font-variant-numeric: tabular-nums;
+}
+@container (max-width: 570px) {
+  #campus-stores .action-guide {
+    padding: 15px 14px;
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+  }
+  #campus-stores .action-guide button {
+    width: 100%;
+  }
 }
