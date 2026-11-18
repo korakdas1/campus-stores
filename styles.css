@@ -956,3 +956,54 @@ body > main { max-width: 1180px; }
   #campus-stores .featured-request h3 { font-size: 18px; }
   #campus-stores .priority { margin: 9px 12px 0; padding: 10px; }
 }
+
+/* Scan states before details: visible by the item name even on narrow screens. */
+#campus-stores .loan-card h3 { gap: 7px; }
+#campus-stores .loan-card h3 .tag { font-size: 10px; letter-spacing: .01em; }
+#campus-stores .tag.state-good {
+  background: #e0f5e8;
+  border: 1px solid #c2e5ce;
+  color: #17613c;
+}
+#campus-stores .tag.state-neutral {
+  background: #edf2f6;
+  border: 1px solid #dce5ec;
+  color: #455e6f;
+}
+#campus-stores .tag.state-warning {
+  background: #fff1d8;
+  border: 1px solid #f3d9a5;
+  color: #82521a;
+}
+#campus-stores .tag.state-danger {
+  background: #ffebe7;
+  border: 1px solid #f7cdc5;
+  color: #a33127;
+}
+#campus-stores .loan-actions button[data-action="verify"] {
+  background: #edf6f8;
+  color: #174c5a;
+  border: 1px solid #b8d7db;
+  font-weight: 750;
+  text-decoration: none;
+}
+#campus-stores .loan-actions button[data-action="verify"]:hover {
+  background: #dceef0;
+  border-color: #87b9c1;
+}
+#campus-stores .loan-actions button[data-action="handover"] {
+  font-size: 12px;
+  text-decoration: underline;
+  background: transparent;
+  border-color: transparent;
+}
+#campus-stores .featured-request button {
+  background: transparent;
+  color: #1b5863;
+  border-color: #bdd6dc;
+}
+#campus-stores .featured-request button:hover { background: #e6f3f5; }
+#campus-stores .statusbar [role="status"] {
+  color: #355e70;
+  font-variant-numeric: tabular-nums;
+}
