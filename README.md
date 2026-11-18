@@ -39,6 +39,18 @@ On Saturday at 9 am, the incoming shift must reconstruct custody from separate s
 - **Reduce pickup friction:** available unit choices follow the selected approved request; its original due time is preselected.
 - **Make it usable:** a clear visual hierarchy, responsive layout, readable statuses, focus styling and explicit actions. All four original tabs remain.
 
+## Design for a five-second glance
+
+The desk worker should immediately answer **where am I, what is outstanding, and what do I do now?** To reduce unnecessary reading, the interface prioritizes:
+
+1. **One next action** at the top, written as an instruction rather than a vague command.
+2. **Short outcome-oriented status:** the Film Society summary says how many items came back and how many are still out.
+3. **Status beside the item name** so "Due soon", "Due now", and "Overdue" remain visible on a narrow screen.
+4. **Details on demand:** the returned item's asset ID is large, while its full slip context sits behind "View loan details".
+5. **Accessible confirmation:** asset-ID mismatch prevents closure and provides text feedback instead of relying on colour alone.
+
+"Five-second glance" is a **design heuristic, not a measured usability result**. The actual field measure remains the clarification questions counted during handover, described below. I did not invent time-savings, click reductions or user-test scores.
+
 ## Walkthrough
 
 | Shift | Action | Expected result |
