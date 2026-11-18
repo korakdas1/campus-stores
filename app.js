@@ -337,18 +337,18 @@
   function register() {
     let html = head(
       "Loan register",
-      "One accountable slip per physical unit · verify the ID before closing",
+      "Issue, track, and safely check in equipment",
       s.editing
         ? btn("Cancel", "cancel")
-        : btn("New issue slip", "new", "", "primary"),
+        : btn("Issue an item", "new", "", "primary"),
     );
     if (s.editing) {
       const available = assets.filter((a) => !a.repair && !out(a.id));
       const select = (label, key, options) =>
         '<label><span>' + label + '</span><select name="' + key +
         '" required><option value="">Select…</option>' + opts(options) + '</select></label>';
-      return html + '<div class="workflow-panel"><span class="eyebrow">Step 1 · Check out a unit</span>' +
-        '<p>Create one slip for each physical item. Approval and stock checks remain enforced.</p>' +
+      return html + '<div class="workflow-panel"><span class="eyebrow">Equipment checkout</span>' +
+        '<p>Choose an approved item and who is collecting it.</p>' +
         '<form data-issue><div class="form">' +
         select("Approved request", "req", requests.map((r) => [r.id, r.id + " · " + r.club])) +
         select("Unit leaving the desk", "asset", available.map((a) => [a.id, a.id + " · " + a.model + " (" + a.type + ")"])) +
@@ -361,11 +361,13 @@
       const l = s.loans.find((x) => x.num === s.verifying && !x.back);
       if (l) {
         const a = getAsset(l.asset);
-        html += '<div class="workflow-panel" id="verify-return"><span class="eyebrow">Step 2 · Verified return</span>' +
-          '<h3>Check the physical label before closing L-' + l.num + '</h3>' +
-          '<p>Expected: <strong>' + esc(a.id + " · " + a.model) + '</strong> · Bin ' + esc(a.bin) +
-          '<br>Request ' + esc(l.req) + ' · Collected by ' + esc(l.who) +
-          ' · Currently with ' + esc(holder(l)) + '</p>' +
+        html += '<div class="workflow-panel" id="verify-return"><span class="eyebrow">Return verification</span>' +
+          '<h3>Check the label on the returned item</h3>' +
+          '<div class="verification-target"><small>EXPECTED UNIT</small><strong>' + esc(a.id) +
+          '</strong><span>' + esc(a.model) + ' · Bin ' + esc(a.bin) + '</span></div>' +
+          '<details class="detail-disclosure"><summary>View loan details</summary><p>' +
+          esc("Slip L-" + l.num + " · Request " + l.req + " · Collected by " + l.who +
+            " · Currently with " + holder(l)) + '</p></details>' +
           '<form data-verify><input type="hidden" name="slip" value="' + l.num + '">' +
           '<div class="form"><label><span>Asset ID on the item in front of you</span>' +
           '<input name="unit" required autocomplete="off" placeholder="e.g. AD-12" aria-describedby="verify-help"></label>' +
@@ -382,10 +384,9 @@
       if (l) {
         const candidates = ["Fri 8 pm", "Sat 9 am", "Sat 10 am", "Sat noon"];
         const due = l.expected || "Sat 9 am";
-        html += '<div class="workflow-panel" id="record-handover"><span class="eyebrow">Step 3 · Linked shift handover</span>' +
+        html += '<div class="workflow-panel" id="record-handover"><span class="eyebrow">Linked handover</span>' +
           '<h3>Who has ' + esc(l.asset) + ' now?</h3>' +
-          '<p>The original collector ' + esc(l.who) + ' and approved due time ' + esc(l.due) +
-          ' stay on the record. Record new custody separately.</p>' +
+          '<p>Record who has it now and when they will return it.</p>' +
           '<form data-handover><input type="hidden" name="slip" value="' + l.num + '">' +
           '<div class="form"><label><span>Current holder</span><select name="custodian" required>' +
           opts(people.map((p) => [p, p])) + '</select></label>' +
@@ -407,17 +408,18 @@
     for (const l of shown) {
       const a = getAsset(l.asset);
       html += '<article class="loan-card"><div class="loan-details"><span class="eyebrow">L-' +
-        l.num + ' · ' + esc(l.req) + '</span><h3>' + esc(l.asset + " · " + a.type) +
-        '</h3><p>' + esc(a.model + " · Bin " + a.bin + " · Collected by " + l.who) +
-        '</p><p>' + esc("Original due: " + l.due) +
-        (!l.back ? " · Current holder: " + esc(holder(l)) + " · Expected: " + esc(expectedBack(l)) : "") +
+        l.num + ' · ' + esc(l.req) + '</span><h3>' + esc(a.type) + ' <span class="unit-id">' + esc(l.asset) +
+        '</span></h3><p>' + esc(a.model + ' · ' + getReq(l.req).club) +
+        '</p><p class="loan-custody">' +
+        (!l.back ? '<strong>With ' + esc(holder(l)) + '</strong> · Expected ' + esc(expectedBack(l)) :
+          'Returned · Originally due ' + esc(l.due)) +
         '</p>' + (l.handoverNote && !l.back ? '<p class="inline-note">Handover: ' + esc(l.handoverNote) + '</p>' : '') +
         (l.back ? '<p class="return-proof">' + esc("Verified by asset ID · Returned by " +
           (l.returnedBy || "not recorded") + " · " + (l.returnedAt || "Earlier shift")) + '</p>' : '') +
         '</div><div class="loan-actions">' +
         badge(l.back ? "Returned" : "Outstanding", l.back) +
         (!l.back ? btn("Verify return", "verify", String(l.num), "primary") +
-          btn("Set handover", "handover", String(l.num)) : "") +
+          (s.phase > 0 ? btn("Add handover", "handover", String(l.num)) : "") : "") +
         '</div></article>';
     }
     return html;
