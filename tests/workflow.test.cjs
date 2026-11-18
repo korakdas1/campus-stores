@@ -205,6 +205,37 @@ test("top-level screen stays compact: three metrics, one prominent request", () 
   const app = harness();
   const metrics = app.elements["[data-metrics]"].innerHTML;
   assert.equal((metrics.match(/class="metric"/g) || []).length, 3);
-  assert.match(app.elements["[data-page]"].innerHTML, /Your current request/);
-  assert.match(app.elements["[data-page]"].innerHTML, /Review approved kit/);
+  assert.match(app.elements["[data-page]"].innerHTML, /Current task · Film Society/);
+  assert.match(app.elements["[data-page]"].innerHTML, /See approved items/);
+});
+
+test("Friday evening marks still-out equipment due soon", () => {
+  const app = harness(); setupFilmKit(app); app.click("advance");
+  app.click("tab", "Loan register");
+  assert.match(app.elements["[data-page]"].innerHTML, /Due soon/);
+});
+test("unchanged Friday due becomes overdue on Saturday", () => {
+  const app = harness(); setupFilmKit(app);
+  app.click("advance"); app.click("advance"); app.click("tab", "Loan register");
+  assert.match(app.elements["[data-page]"].innerHTML, /Overdue/);
+});
+test("handover expected Saturday 9 am shows Due now, not overdue for that unit", () => {
+  const app = harness(); setupFilmKit(app); app.click("advance");
+  app.click("handover", 404);
+  app.submit("handover", {
+    slip:"404",custodian:"Leela Das",expected:"Sat 9 am",
+    context:"Leela returns the adapter at 9 am."
+  });
+  app.click("advance"); app.click("tab", "Loan register");
+  const list = app.elements["[data-page]"].innerHTML;
+  const ad12 = list.match(/<article class="loan-card">(?:(?!<\/article>)[\s\S])*?AD-12(?:(?!<\/article>)[\s\S])*?<\/article>/);
+  assert.ok(ad12);
+  assert.match(ad12[0], /Due now/);
+  assert.equal(ad12[0].includes("Overdue"), false);
+});
+test("status bar gives Film Society progress in one line", () => {
+  const app = harness(); setupFilmKit(app); app.click("advance");
+  verify(app, 402, "PR-04");
+  verify(app, 403, "SP-02");
+  assert.match(app.elements["[data-status]"].textContent, /2 back · 1 still out/);
 });
