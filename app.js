@@ -186,32 +186,89 @@
       ? "Only equipment approved for " + req.club + " can be issued."
       : "Choose an approved request to see the matching available units.";
   }
+  function nextWork() {
+    const film = s.loans.filter((l) => l.req === "RQ-214");
+    const types = getReq("RQ-214").items;
+    const notIssued = types.filter((type) => !film.some((l) => getAsset(l.asset).type === type));
+    const pendingReturns = film.filter((l) => !l.back && getAsset(l.asset).type !== "USB-C → HDMI adapter");
+    const adapter = film.find((l) => getAsset(l.asset).type === "USB-C → HDMI adapter");
+    const outstanding = film.filter((l) => !l.back);
+    if (notIssued.length) return {
+      title: "Prepare the Film Society kit",
+      summary: film.length + " of 3 items issued · Kabir needs the full kit for the screening.",
+      label: film.length ? "Issue next item" : "Start pickup",
+      action: "issue-film",
+    };
+    if (s.phase === 0) return {
+      title: "Pickup recorded",
+      summary: "All 3 items are checked out. Move to the evening return.",
+      label: "Continue to returns",
+      action: "advance",
+    };
+    if (s.phase === 1 && pendingReturns.length) return {
+      title: "Check in the returned equipment",
+      summary: pendingReturns.length + " item" + (pendingReturns.length === 1 ? "" : "s") +
+        " to verify · Kabir brought back the projector and speaker.",
+      label: "Verify a return",
+      action: "verify-next",
+      slip: pendingReturns[0].num,
+    };
+    if (s.phase === 1 && adapter && !adapter.back && !adapter.custodian) return {
+      title: "Hand over the missing adapter",
+      summary: "Leela has the adapter. Record who has it and when it is due back.",
+      label: "Record handover",
+      action: "handover-adapter",
+      slip: adapter.num,
+    };
+    if (s.phase === 1) return {
+      title: "Evening shift accounted for",
+      summary: adapter && !adapter.back
+        ? "The adapter is linked to Leela for the morning shift."
+        : "There is no unresolved Film Society return.",
+      label: "Continue to Saturday",
+      action: "advance",
+    };
+    if (outstanding.length) return {
+      title: adapter && !adapter.back ? "Verify Leela's adapter" : "Finish the outstanding return",
+      summary: adapter && !adapter.back
+        ? adapter.asset + " · " + getAsset(adapter.asset).model +
+          " · Confirm the label before returning it to stock."
+        : outstanding.length + " Film Society item(s) still need a verified return.",
+      label: "Verify physical item",
+      action: "verify-next",
+      slip: (adapter && !adapter.back ? adapter : outstanding[0]).num,
+    };
+    return {
+      title: "Film Society kit complete",
+      summary: "All 3 items have verified returns. The register is ready for the next shift.",
+      label: "View completed loans",
+      action: "review-loans",
+    };
+  }
+
   function overview() {
     const open = s.loans.filter((l) => !l.back);
     const onShelf = assets.filter((a) => !a.repair && !out(a.id));
     const metrics = q("[data-metrics]");
     if (metrics) metrics.innerHTML =
-      '<div class="metric"><small>Open equipment slips</small><strong>' + open.length + '</strong></div>' +
-      '<div class="metric"><small>Ready to issue</small><strong>' + onShelf.length + '</strong></div>' +
-      '<div class="metric"><small>Under repair</small><strong>' + assets.filter((a) => a.repair).length + '</strong></div>' +
-      '<div class="metric"><small>Shift progress</small><strong>' + (s.phase + 1) + ' <span>/ 3</span></strong></div>';
+      '<div class="metric"><strong>' + open.length + '</strong><span>Out on loan</span></div>' +
+      '<div class="metric"><strong>' + onShelf.length + '</strong><span>Ready to issue</span></div>' +
+      '<div class="metric"><strong>' + assets.filter((a) => a.repair).length + '</strong><span>Under repair</span></div>';
     const priority = q("[data-priority]");
     if (!priority) return;
-    priority.hidden = s.phase === 0;
-    if (s.phase === 0) return;
-    const film = s.loans.filter((l) => l.req === "RQ-214");
-    const missing = film.filter((l) => !l.back);
-    const title = !film.length ? "Film Society pickup hasn't been recorded" :
-      missing.length ? missing.length + " Film Society unit" + (missing.length === 1 ? "" : "s") + " still outstanding" :
-      "Film Society kit fully accounted for";
-    const detail = missing.map((l) => {
-      const a = getAsset(l.asset);
-      return esc(l.asset + " · " + a.model + " · With " + holder(l) + " · Expected " + expectedBack(l));
-    }).join("<br>");
-    priority.innerHTML = '<div><span class="eyebrow">Next-shift handover</span><strong>' + esc(title) +
-      '</strong><p>' + (detail || (film.length ? "All issued units have a verified return." :
-      "Open the register to issue the approved screening kit.")) +
-      '</p></div>' + btn("Open loan register", "open-register", "", "primary");
+    const openFilm = s.loans.filter((l) => l.req === "RQ-214" && !l.back);
+    priority.hidden = s.phase === 0 || !openFilm.length;
+    if (priority.hidden) {
+      priority.innerHTML = "";
+      return;
+    }
+    priority.innerHTML = '<div class="priority-heading"><span class="attention-dot" aria-hidden="true"></span>' +
+      '<strong>Still outstanding</strong><span class="priority-count">' + openFilm.length + '</span></div>' +
+      '<div class="priority-list">' + openFilm.map((l) => {
+        const a = getAsset(l.asset);
+        return '<span class="priority-item"><b>' + esc(l.asset) + '</b> · ' + esc(a.model) +
+          ' <span>With ' + esc(holder(l)) + '</span></span>';
+      }).join("") + '</div>';
   }
   function requestPage() {
     let html = head(
@@ -236,17 +293,19 @@
         r.items.map((x) => "<li>" + x + "</li>").join("") +
         "</ul><p>" +
         r.note +
-        "</p></div>";
-    } else
-      html += requests
-        .map((r) =>
-          row(
-            r.event,
-            r.id + " · " + r.club,
-            btn("View form", "request", r.id),
-          ),
-        )
+        "</p>" + btn("Issue equipment", "issue-selected", r.id, "primary") + "</div>";
+    } else {
+      const film = requests.find((r) => r.id === "RQ-214");
+      html += '<article class="featured-request">' +
+        '<span class="eyebrow">Your current request</span>' +
+        '<h3>' + esc(film.event) + '</h3>' +
+        '<p>' + esc(film.club) + ' · 3 approved items · Due ' + esc(film.due) + '</p>' +
+        btn("Review approved kit", "request", film.id, "primary") + '</article>';
+      html += '<h3 class="subsection-title">Other approved requests</h3>';
+      html += requests.filter((r) => r.id !== "RQ-214")
+        .map((r) => row(r.event, r.id + " · " + r.club, btn("View", "request", r.id)))
         .join("");
+    }
     return html;
   }
   function inventory() {
@@ -414,9 +473,14 @@
     q("[data-clock]").textContent = phase.time;
     q("[data-shift-title]").textContent = phase.title;
     q("[data-shift]").textContent = phase.text;
+    q("[data-step-label]").textContent = "STEP " + (s.phase + 1) + " OF 3";
+    const work = nextWork();
+    q("[data-next-title]").textContent = work.title;
+    q("[data-next-summary]").textContent = work.summary;
+    q("[data-next-action]").textContent = work.label;
     const advance = q('[data-action="advance"]');
-    advance.hidden = !phase.next;
-    advance.textContent = phase.next || "";
+    advance.hidden = !phase.next || work.action === "advance";
+    advance.textContent = "Skip ahead · " + (s.phase === 0 ? "Return time" : "Next morning");
     q("[data-nav]").innerHTML = pages
       .map(
         ([n, icon]) =>
@@ -427,7 +491,7 @@
           '"><svg aria-hidden="true" class="store-icon"><use href="#icon-' +
           icon +
           '"></use></svg>' +
-          n +
+          (n === "Loan register" ? "Loans" : n === "Desk book" ? "Handover" : n) +
           "</button>",
       )
       .join("");
@@ -467,9 +531,48 @@
         if (s.phase < 2) s.phase++;
         s.notice = "Shift time updated.";
         break;
+      case "next": {
+        const work = nextWork();
+        if (work.action === "advance") {
+          if (s.phase < 2) s.phase++;
+        } else if (work.action === "issue-film") {
+          s.tab = "Loan register";
+          s.selected = "RQ-214";
+          s.editing = true;
+          s.verifying = null;
+          s.handoverNum = null;
+        } else if (work.action === "verify-next") {
+          s.tab = "Loan register";
+          s.onlyOpen = true;
+          s.editing = false;
+          s.verifying = work.slip;
+          s.handoverNum = null;
+        } else if (work.action === "handover-adapter") {
+          s.tab = "Loan register";
+          s.editing = false;
+          s.verifying = null;
+          s.handoverNum = work.slip;
+        } else {
+          s.tab = "Loan register";
+          s.onlyOpen = false;
+          s.editing = false;
+          s.verifying = null;
+          s.handoverNum = null;
+        }
+        break;
+      }
+      case "issue-selected":
+        s.selected = v;
+        s.tab = "Loan register";
+        s.editing = true;
+        s.verifying = null;
+        s.handoverNum = null;
+        break;
       case "tab":
         s.tab = v;
         s.editing = false;
+        s.verifying = null;
+        s.handoverNum = null;
         break;
       case "close":
         s.selected = "";
