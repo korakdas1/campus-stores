@@ -19,6 +19,7 @@ function harness(initialStorage = null) {
     "[data-clock]", "[data-shift-title]", "[data-shift]",
     '[data-action="advance"]', "[data-nav]", "[data-page]",
     "[data-status]", "[data-metrics]", "[data-priority]",
+    "[data-step-label]", "[data-next-title]", "[data-next-summary]", "[data-next-action]",
   ]) {
     elements[name] = { textContent: "", innerHTML: "", hidden: false };
   }
@@ -165,4 +166,45 @@ test("restart removes changes and restores original Tara slip", () => {
   assert.equal(app.state.phase, 0);
   assert.equal(app.state.loans.length, 1);
   assert.equal(app.state.loans[0].asset, "MI-09");
+});
+
+test("the first screen gives one plain-language next action", () => {
+  const app = harness();
+  assert.match(app.elements["[data-next-title]"].textContent, /Prepare the Film Society kit/);
+  assert.equal(app.elements["[data-next-action]"].textContent, "Start pickup");
+  app.click("next");
+  assert.equal(app.state.tab, "Loan register");
+  assert.equal(app.state.editing, true);
+});
+test("the main action guides the entire 3-stage scenario", () => {
+  const app = harness(); setupFilmKit(app);
+  assert.equal(app.elements["[data-next-action]"].textContent, "Continue to returns");
+  app.click("next");
+  assert.equal(app.state.phase, 1);
+  app.click("next");
+  assert.equal(app.state.verifying, 402);
+  app.submit("verify", {slip:"402",unit:"PR-04",returnedBy:"Kabir Sen"});
+  app.click("next");
+  assert.equal(app.state.verifying, 403);
+  app.submit("verify", {slip:"403",unit:"SP-02",returnedBy:"Kabir Sen"});
+  assert.equal(app.elements["[data-next-action]"].textContent, "Record handover");
+  app.click("next");
+  assert.equal(app.state.handoverNum, 404);
+  app.submit("handover", {
+    slip:"404",custodian:"Leela Das",expected:"Sat 9 am",
+    context:"Adapter will return tomorrow."
+  });
+  app.click("next");
+  assert.equal(app.state.phase, 2);
+  app.click("next");
+  assert.equal(app.state.verifying, 404);
+  app.submit("verify", {slip:"404",unit:"AD-12",returnedBy:"Leela Das"});
+  assert.equal(app.elements["[data-next-action]"].textContent, "View completed loans");
+});
+test("top-level screen stays compact: three metrics, one prominent request", () => {
+  const app = harness();
+  const metrics = app.elements["[data-metrics]"].innerHTML;
+  assert.equal((metrics.match(/class="metric"/g) || []).length, 3);
+  assert.match(app.elements["[data-page]"].innerHTML, /Your current request/);
+  assert.match(app.elements["[data-page]"].innerHTML, /Review approved kit/);
 });
