@@ -63,6 +63,33 @@
           d="M20 9a2 2 0 0 1 2 2v10.286a.71.71 0 0 1-1.212.502l-2.202-2.202A2 2 0 0 0 17.172 19H10a2 2 0 0 1-2-2v-1"
         />
       </symbol>
+      <symbol id="icon-alert" viewBox="0 0 24 24">
+        <path
+          d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"
+        />
+        <path d="M12 9v4" />
+        <path d="M12 17h.01" />
+      </symbol>
+      <symbol id="icon-tag" viewBox="0 0 24 24">
+        <path
+          d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"
+        />
+        <circle cx="7.5" cy="7.5" r=".5" fill="currentColor" />
+      </symbol>
+      <symbol id="icon-user" viewBox="0 0 24 24">
+        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+        <circle cx="12" cy="7" r="4" />
+      </symbol>
+      <symbol id="icon-check" viewBox="0 0 24 24">
+        <path d="M20 6 9 17l-5-5" />
+      </symbol>
+      <symbol id="icon-chevron" viewBox="0 0 24 24">
+        <path d="m9 18 6-6-6-6" />
+      </symbol>
+      <symbol id="icon-clock" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 6v6l4 2" />
+      </symbol>
     </svg>
     <main>
       <div id="campus-stores">
@@ -92,6 +119,24 @@
                 Use any tools you like, including AI assistants, web search,
                 and design or coding tools.
               </p>
+            </div>
+          </details>
+          <details class="changes">
+            <summary>What I changed</summary>
+            <div class="briefcopy">
+              <h2>Keep the loan honest after a partial return</h2>
+              <p>
+                Before: once the adapter didn’t come back, its slip still said
+                “Kabir · due Fri 8 pm”, and nothing showed which adapter to
+                expect.
+              </p>
+              <ul>
+                <li><b>Take a return:</b> anything not back needs a who and a when.</li>
+                <li><b>Overdue</b> goes red and to the top.</li>
+                <li><b>Record return</b> checks the label before closing.</li>
+                <li>Also: one-step kit issue, inline errors, Undo.</li>
+              </ul>
+              <p>Kept: one slip per unit, and every issuing rule.</p>
             </div>
           </details>
         </div>
@@ -128,6 +173,8 @@
         </div>
         <div class="statusbar">
           <span role="status" aria-live="polite" data-status></span
+          ><button type="button" data-action="undo" class="undo" hidden>
+            Undo</button
           ><button type="button" data-action="restart">
             Restart sample shift
           </button>
