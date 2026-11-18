@@ -381,6 +381,69 @@
       auto: true,
     });
 
+  // One stage-aware action to minimize navigation and guesswork at the counter.
+  function guideWork() {
+    const r = getReq("RQ-214");
+    const film = s.loans.filter((l) => l.req === r.id);
+    const missing = r.items.filter((t) => !film.some((l) => getAsset(l.asset).type === t));
+    if (missing.length) return {
+      kicker: "Pickup · Film Society",
+      title: "Prepare the screening kit",
+      detail: (r.items.length - missing.length) + " of 3 items issued · Kabir is collecting.",
+      button: "Open approved kit",
+      action: "request",
+    };
+    if (s.phase === 0) return {
+      kicker: "Pickup complete",
+      title: "All three items are checked out",
+      detail: "The screening kit is ready. Continue to the evening return.",
+      button: "Continue to returns",
+      action: "advance",
+    };
+    const outstanding = film.filter((l) => !l.back);
+    if (s.phase === 1) {
+      if (outstanding.some((l) => getAsset(l.asset).type !== "USB-C → HDMI adapter")) return {
+        kicker: "Evening · Partial return",
+        title: "Record what came back",
+        detail: "Kabir has the projector and speaker; Leela has the adapter.",
+        button: "Take partial return",
+        action: "kit-return",
+      };
+      if (outstanding.some((l) => l.holder === l.who)) return {
+        kicker: "Evening · Handover",
+        title: "Record who still has the adapter",
+        detail: "The next shift needs Leela's name and expected return time.",
+        button: "Record missing item",
+        action: "kit-return",
+      };
+      return {
+        kicker: "Handover ready",
+        title: "The next shift knows what is outstanding",
+        detail: "The missing unit has a named holder and updated expected return.",
+        button: "Continue to Saturday",
+        action: "advance",
+      };
+    }
+    if (outstanding.length) {
+      const l = outstanding.find((x) => x.asset === "AD-12") || outstanding[0];
+      return {
+        kicker: "Saturday · Verify return",
+        title: "Check the physical asset label",
+        detail: l.asset + " · " + getAsset(l.asset).model + " · With " + l.holder,
+        button: "Verify " + l.asset,
+        action: "verify",
+        slip: l.num,
+      };
+    }
+    return {
+      kicker: "Shift complete",
+      title: "Film Society kit accounted for",
+      detail: "All three physical units are returned. Review the closed slips.",
+      button: "Review completed loans",
+      action: "review",
+    };
+  }
+
   // ---------------------------------------------------------------------------
   // Requests
   // ---------------------------------------------------------------------------
@@ -777,8 +840,11 @@
           "</span></p>"
         : "") +
       '<div class="form">' +
-      select("Returned by", "by", peopleOpts, l.holder, " data-autofocus") +
-      '</div><div class="buttons">' +
+      '<label><span>ID printed on the item</span>' +
+      '<input name="assetId" required data-autofocus autocomplete="off" spellcheck="false" ' +
+      'placeholder="e.g. ' + esc(a.id) + '" aria-label="Enter physical asset ID"></label>' +
+      select("Returned by", "by", peopleOpts, l.holder) +
+      '</div>' + errorBox() + '<div class="buttons">' +
       btn("Matches · close slip", "confirm-return", String(l.num), "primary") +
       btn("Wrong unit", "mismatch", String(l.num)) +
       btn("Cancel", "cancel", "", "ghost") +
@@ -862,6 +928,11 @@
     q("[data-clock]").textContent = phase.time;
     q("[data-shift-title]").textContent = phase.title;
     q("[data-shift]").textContent = phase.text;
+    const next = guideWork();
+    q("[data-guide-kicker]").textContent = next.kicker;
+    q("[data-guide-title]").textContent = next.title;
+    q("[data-guide-description]").textContent = next.detail;
+    q("[data-guide-button]").textContent = next.button;
     const advance = q('[data-action="advance"]');
     advance.hidden = !phase.next;
     advance.textContent = phase.next || "";
@@ -924,6 +995,32 @@
       case "restart":
         s = original();
         break;
+      case "guide": {
+        const next = guideWork();
+        s.panel = "";
+        if (next.action === "request") {
+          s.tab = "Requests";
+          s.selected = "RQ-214";
+        } else if (next.action === "kit-return") {
+          s.tab = "Requests";
+          s.selected = "RQ-214";
+          s.panel = "kit-return";
+          focusNext = "[data-autofocus]";
+        } else if (next.action === "advance") {
+          if (s.phase < 2) s.phase++;
+          s.undo = null;
+          s.notice = "Now " + shifts[s.phase].time + ".";
+        } else if (next.action === "verify") {
+          s.tab = "Loan register";
+          s.onlyOpen = true;
+          s.panel = "check:" + next.slip;
+          focusNext = "[data-autofocus]";
+        } else if (next.action === "review") {
+          s.tab = "Loan register";
+          s.onlyOpen = false;
+        }
+        break;
+      }
       case "advance":
         if (s.phase < 2) s.phase++;
         s.panel = "";
@@ -968,6 +1065,14 @@
       case "confirm-return": {
         const l = s.loans.find((x) => x.num === Number(v));
         if (!l || l.back) return;
+        const assetInput = q('.panel.check input[name="assetId"]');
+        const entered = String(assetInput ? assetInput.value : "").trim().toUpperCase();
+        if (entered !== l.asset) {
+          const panel = q(".panel.check");
+          if (panel) fail(panel, "This slip expects " + l.asset + ". Check the item's physical label or flag a wrong unit.");
+          if (assetInput) assetInput.focus();
+          return;
+        }
         const sel = q('.panel.check select[name="by"]');
         const by = sel && people.includes(sel.value) ? sel.value : l.holder;
         const a = getAsset(l.asset);
