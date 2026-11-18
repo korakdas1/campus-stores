@@ -412,7 +412,7 @@
         const due = l.expected || "Sat 9 am";
         html += '<div class="workflow-panel" id="record-handover"><span class="eyebrow">Linked handover</span>' +
           '<h3>Who has ' + esc(l.asset) + ' now?</h3>' +
-          '<p>Record who has it now and when they will return it.</p>' +
+          '<p>One item is still out. Leave the next shift a clear record.</p>' +
           '<form data-handover><input type="hidden" name="slip" value="' + l.num + '">' +
           '<div class="form"><label><span>Who has it?</span><select name="custodian" required>' +
           opts(people.map((p) => [p, p])) + '</select></label>' +
@@ -435,15 +435,14 @@
       const a = getAsset(l.asset);
       html += '<article class="loan-card"><div class="loan-details"><span class="eyebrow">L-' +
         l.num + ' · ' + esc(l.req) + '</span><h3>' + esc(a.type) + ' <span class="unit-id">' + esc(l.asset) +
-        '</span></h3><p>' + esc(a.model + ' · ' + getReq(l.req).club) +
+        '</span>' + returnBadge(l) + '</h3><p>' + esc(a.model + ' · ' + getReq(l.req).club) +
         '</p><p class="loan-custody">' +
         (!l.back ? '<strong>With ' + esc(holder(l)) + '</strong> · Back by ' + esc(expectedBack(l)) :
-          'Verified · Returned by ' + esc(l.returnedBy || "unknown")) +
+          'Returned by ' + esc(l.returnedBy || "unknown")) +
         '</p>' + (l.handoverNote && !l.back ? '<p class="inline-note">Handover: ' + esc(l.handoverNote) + '</p>' : '') +
         (l.back ? '<p class="return-proof">' + esc("Verified by asset ID · Returned by " +
           (l.returnedBy || "not recorded") + " · " + (l.returnedAt || "Earlier shift")) + '</p>' : '') +
         '</div><div class="loan-actions">' +
-        returnBadge(l) +
         (!l.back ? btn("Verify return", "verify", String(l.num)) +
           (s.phase > 0 ? btn("Add handover", "handover", String(l.num)) : "") : "") +
         '</div></article>';
