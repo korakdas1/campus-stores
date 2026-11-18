@@ -223,6 +223,21 @@
   // Asset IDs are styled like the sticker on the physical unit.
   const chip = (id, big = false) =>
     '<span class="assetid' + (big ? " big" : "") + '">' + esc(id) + "</span>";
+  // Typed labels: "ad12", "AD 12" and "AD-12" all mean AD-12.
+  const normId = (t) => {
+    const c = String(t || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+    const m = c.match(/^([A-Z]+)(\d+)$/);
+    return m ? m[1] + "-" + m[2].padStart(2, "0") : c;
+  };
+  const assetByLabel = (t) => assets.find((a) => a.id === normId(t));
+  const labelInput = (name, label, extra = "") =>
+    '<label class="labelfield"><span>' +
+    esc(label) +
+    '</span><input name="' +
+    name +
+    '" class="labelinput" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Type ID"' +
+    extra +
+    "></label>";
   const select = (label, name, options, selected = "", extra = "") =>
     "<label><span>" +
     esc(label) +
@@ -556,22 +571,23 @@
     let html =
       '<form data-form="kit-return" data-req="' +
       esc(r.id) +
-      '" class="panel task"><h3>Take a return</h3><p class="hint">Tick what’s on the counter.</p>';
+      '" class="panel task"><h3>Take a return</h3><p class="hint">Type the ID on each unit that’s back. Leave it blank if it isn’t.</p>';
     open.forEach((l, i) => {
       const a = getAsset(l.asset);
       html +=
-        '<div class="checkrow stacked"><label class="tick"><input type="checkbox" name="back" value="' +
-        l.num +
-        '" data-toggle="' +
-        l.num +
-        '"' +
-        (i === 0 ? " data-autofocus" : "") +
-        "><span><strong>" +
+        '<div class="checkrow"><div class="tick"><span><strong>' +
         chip(a.id) +
         esc(a.model) +
         "</strong><small>" +
         esc(a.type) +
-        '</small></span></label><div class="stillout form" data-stillout="' +
+        "</small></span></div>" +
+        labelInput(
+          "label_" + l.num,
+          "ID on the unit",
+          ' data-expect="' + a.id + '" data-toggle="' + l.num + '"' + (i === 0 ? " data-autofocus" : ""),
+        ) +
+        '<p class="labelstate" aria-live="polite" hidden></p>' +
+        '<div class="stillout form" data-stillout="' +
         l.num +
         '">' +
         select("Not back — who has it?", "holder_" + l.num, peopleOpts) +
@@ -757,8 +773,10 @@
     const a = getAsset(l.asset);
     const twins = assets.filter((x) => x.type === a.type && x.id !== a.id);
     return (
-      '<div class="panel task check" role="group" aria-label="Check the returned unit"><h3>Does the label match?</h3>' +
-      '<div class="labelcheck">' +
+      '<form class="panel task check" data-form="check" data-num="' +
+      l.num +
+      '" aria-label="Check the returned unit"><h3>Type the ID on the label</h3>' +
+      '<div class="labelcheck"><small class="expect">Expecting</small>' +
       chip(a.id, true) +
       "<div><strong>" +
       esc(a.model) +
@@ -777,12 +795,14 @@
           "</span></p>"
         : "") +
       '<div class="form">' +
-      select("Returned by", "by", peopleOpts, l.holder, " data-autofocus") +
-      '</div><div class="buttons">' +
-      btn("Matches · close slip", "confirm-return", String(l.num), "primary") +
-      btn("Wrong unit", "mismatch", String(l.num)) +
+      labelInput("label", "ID on the unit", ' required data-autofocus data-expect="' + a.id + '"') +
+      select("Returned by", "by", peopleOpts, l.holder) +
+      "</div>" +
+      '<p class="labelstate" aria-live="polite" hidden></p>' +
+      errorBox() +
+      '<div class="buttons"><button type="submit" class="primary" data-submit>Close slip</button>' +
       btn("Cancel", "cancel", "", "ghost") +
-      "</div></div>"
+      "</div></form>"
     );
   }
 
@@ -965,46 +985,6 @@
       case "scope":
         s.onlyOpen = v === "0";
         break;
-      case "confirm-return": {
-        const l = s.loans.find((x) => x.num === Number(v));
-        if (!l || l.back) return;
-        const sel = q('.panel.check select[name="by"]');
-        const by = sel && people.includes(sel.value) ? sel.value : l.holder;
-        const a = getAsset(l.asset);
-        s.undo = snap("closing L-" + l.num);
-        closeLoan(l, by);
-        if (l.history.length || l.lateBy)
-          addLog(
-            a.id +
-              " back from " +
-              by +
-              ", label checked." +
-              (l.lateBy ? " " + fmtDur(l.lateBy) + " late." : ""),
-            l.req,
-          );
-        s.panel = "";
-        s.notice =
-          a.id +
-          " back → bin " +
-          a.bin +
-          "." +
-          (l.lateBy ? " " + fmtDur(l.lateBy) + " late." : "");
-        break;
-      }
-      case "mismatch": {
-        const l = s.loans.find((x) => x.num === Number(v));
-        if (!l || l.back) return;
-        const sel = q('.panel.check select[name="by"]');
-        const by = sel && people.includes(sel.value) ? sel.value : l.holder;
-        const a = getAsset(l.asset);
-        s.undo = snap("flagging L-" + l.num);
-        const text = "Wrong unit from " + by + ". " + a.id + " still missing.";
-        l.flags.push({ at: shifts[s.phase].short, text });
-        addLog(text, l.req);
-        s.panel = "";
-        s.notice = a.id + " flagged: wrong unit returned.";
-        break;
-      }
       case "undo":
         if (!s.undo) return;
         s.loans = s.undo.loans;
@@ -1031,10 +1011,6 @@
       commit();
       return;
     }
-    if (t.matches("[data-toggle]")) {
-      syncToggle(t);
-      return;
-    }
     // Single-slip form: default "Return by" to the request's own due time.
     if (t.matches('[data-form="issue"] [name="req"]')) {
       const r = getReq(t.value),
@@ -1045,11 +1021,45 @@
     if (err) err.hidden = true;
   });
 
-  function syncToggle(box) {
-    const area = q('[data-stillout="' + box.dataset.toggle + '"]');
-    if (!area) return;
-    area.hidden = box.checked;
-    area.querySelectorAll("select").forEach((x) => (x.disabled = box.checked));
+  // Live feedback while typing a label: match, a different real unit, or unknown.
+  root.addEventListener("input", (e) => {
+    if (e.target.matches("[data-expect]")) syncLabel(e.target);
+    const err = e.target.form && e.target.form.querySelector(".formerror");
+    if (err) err.hidden = true;
+  });
+
+  function syncLabel(inp) {
+    const expect = inp.dataset.expect,
+      typed = inp.value.trim();
+    const got = typed ? assetByLabel(typed) : null;
+    const match = !!got && got.id === expect;
+    const scope = inp.closest(".checkrow") || inp.form;
+    const state = scope.querySelector(".labelstate");
+    if (state) {
+      const show = match || got || normId(typed).length >= 5;
+      state.hidden = !show;
+      state.className = "labelstate " + (match ? "ok" : "bad");
+      state.innerHTML = !show
+        ? ""
+        : match
+          ? icon("check") + "<span>Matches " + esc(expect) + "</span>"
+          : icon("alert") +
+            "<span>" +
+            esc(got ? "That’s " + got.id + " (" + got.model + "), not " + expect : "No unit called " + typed) +
+            "</span>";
+    }
+    if (inp.dataset.toggle) {
+      const area = q('[data-stillout="' + inp.dataset.toggle + '"]');
+      if (area) {
+        area.hidden = match;
+        area.querySelectorAll("select").forEach((x) => (x.disabled = match));
+      }
+    }
+    const submit = inp.form.querySelector("[data-submit]");
+    if (submit) {
+      submit.textContent = got && !match ? "Keep open · flag " + got.id : "Close slip";
+      submit.classList.toggle("danger", !!got && !match);
+    }
   }
 
   root.addEventListener("submit", (e) => {
@@ -1108,15 +1118,52 @@
       return;
     }
 
+    if (kind === "check") {
+      const l = s.loans.find((x) => x.num === Number(f.dataset.num));
+      if (!l || l.back) return;
+      const a = getAsset(l.asset);
+      const typed = String(form.get("label") || "").trim();
+      const by = people.includes(String(form.get("by"))) ? String(form.get("by")) : l.holder;
+      if (!typed) return fail(f, "Type the ID printed on the unit.");
+      const got = assetByLabel(typed);
+      if (!got) return fail(f, "No unit called “" + typed + "”. Check the label.");
+      if (got.id === a.id) {
+        s.undo = snap("closing L-" + l.num);
+        closeLoan(l, by);
+        if (l.history.length || l.lateBy)
+          addLog(
+            a.id + " back from " + by + ", ID checked." + (l.lateBy ? " " + fmtDur(l.lateBy) + " late." : ""),
+            l.req,
+          );
+        s.panel = "";
+        commit(a.id + " back → bin " + a.bin + "." + (l.lateBy ? " " + fmtDur(l.lateBy) + " late." : ""));
+        return;
+      }
+      // A real but different unit: never close the slip, record what happened.
+      s.undo = snap("flagging L-" + l.num);
+      const text =
+        "Wrong unit from " + by + ": " + got.id + " (" + got.model + "), not " + a.id + ". " + a.id + " still missing.";
+      l.flags.push({ at: shifts[s.phase].short, text });
+      addLog(text, l.req);
+      s.panel = "";
+      commit(a.id + " kept open: " + got.id + " was brought instead.");
+      return;
+    }
+
     if (kind === "kit-return") {
       const r = getReq(f.dataset.req);
       if (!r) return;
       const open = s.loans.filter((l) => l.req === r.id && !l.back);
-      const backNums = form.getAll("back").map(Number);
       const by = String(form.get("by"));
       const plan = [];
       for (const l of open) {
-        if (backNums.includes(l.num)) {
+        const a = getAsset(l.asset);
+        const typed = String(form.get("label_" + l.num) || "").trim();
+        if (typed) {
+          const got = assetByLabel(typed);
+          if (!got) return fail(f, "No unit called “" + typed + "”. Check the label.");
+          if (got.id !== a.id)
+            return fail(f, "That’s " + got.id + " (" + got.model + "), not " + a.id + ". Leave " + a.id + " blank if it isn’t back.");
           if (!people.includes(by)) return fail(f, "Who brought it back?");
           plan.push({ l, back: true });
         } else {
