@@ -111,12 +111,23 @@
             <small>Desk time</small><strong data-clock></strong>
           </div>
         </header>
-        <aside class="shift">
-          <div>
-            <b data-shift-title></b>
-            <p data-shift></p>
+        <aside class="shift" aria-label="What to do next">
+          <div class="shift-lead">
+            <div class="shift-meta">
+              <span class="shift-step" data-step-label></span>
+              <span class="shift-stage" data-shift-title></span>
+            </div>
+            <h2 data-next-title></h2>
+            <p class="shift-summary" data-next-summary></p>
+            <details class="shift-context">
+              <summary>Read shift context</summary>
+              <p data-shift></p>
+            </details>
           </div>
-          <button type="button" data-action="advance"></button>
+          <div class="shift-actions">
+            <button type="button" class="primary" data-action="next" data-next-action></button>
+            <button type="button" class="skip-action" data-action="advance"></button>
+          </div>
         </aside>
         <section class="metrics" data-metrics aria-label="Live desk overview"></section>
         <section class="priority" data-priority aria-label="Next shift priorities" hidden></section>
