@@ -369,3 +369,298 @@ body > main {
     min-height: 44px;
   }
 }
+
+
+/* Product-engineering work sample: legible, task-first counter experience */
+:root { background: #edf2f6; }
+body {
+  background: radial-gradient(circle at 15% 0%, #d9edf0 0, transparent 35%),
+              linear-gradient(135deg, #f0f4f7, #eaf0f5);
+  min-height: 100vh;
+}
+body > main { max-width: 1180px; }
+#campus-stores {
+  color-scheme: light;
+  --ink: #1a3040;
+  --quiet: #617689;
+  --paper: #fff;
+  --desk: #f7f9fc;
+  --nav: #f0f5f8;
+  --sel: #196a73;
+  --inv: #fff;
+  --line: #dbe5ed;
+  --memo: #ecf9f3;
+  --memotxt: #205d55;
+  --mark: #f0a56e;
+  --ok: #e2f6e9;
+  --oktxt: #1d774d;
+  border: 1px solid #d2dde6;
+  border-radius: 20px;
+  box-shadow: 0 20px 65px rgba(26, 49, 70, .12);
+  font: 14px/1.55 "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+#campus-stores .examstrip {
+  padding: 11px 27px;
+  border-bottom: 1px solid #dae6ed;
+  background: #f6f9fc;
+}
+#campus-stores .examstrip > span {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+#campus-stores summary { color: #176c76; }
+#campus-stores .mast {
+  padding: 29px 30px;
+  background: linear-gradient(120deg, #172d45, #204b5c);
+  color: #fff;
+}
+#campus-stores .mast h1 { font-size: clamp(29px, 4cqw, 40px); letter-spacing: -.055em; }
+#campus-stores .mast .muted { color: #bdd4db; }
+#campus-stores .brandmark {
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  background: #f0a56e;
+  color: #173044;
+  box-shadow: 0 8px 20px rgba(0,0,0,.16);
+}
+#campus-stores .clock {
+  padding: 10px 17px;
+  border: 1px solid rgba(255,255,255,.23);
+  background: rgba(255,255,255,.07);
+  border-radius: 12px;
+}
+#campus-stores .clock small { color: #b7d0d8; }
+#campus-stores .clock strong { font-size: 16px; }
+#campus-stores .shift {
+  padding: 17px 29px;
+  gap: 24px;
+  background: var(--memo);
+  border-block: 0;
+  border-bottom: 1px solid #cfe5d9;
+}
+#campus-stores .shift b { display: block; font-size: 16px; }
+#campus-stores .shift p { margin-top: 5px; }
+#campus-stores .shift button {
+  color: #fff;
+  background: #1f726a;
+  border-color: #1f726a;
+  box-shadow: 0 3px 9px rgba(31,114,106,.16);
+}
+#campus-stores .metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  background: #fff;
+  border-bottom: 1px solid var(--line);
+}
+#campus-stores .metric {
+  min-height: 93px;
+  padding: 18px 25px;
+  display: grid;
+  align-content: center;
+  gap: 4px;
+}
+#campus-stores .metric + .metric { border-left: 1px solid var(--line); }
+#campus-stores .metric small {
+  font-size: 11px;
+  letter-spacing: .05em;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+#campus-stores .metric strong {
+  font-size: 28px;
+  font-weight: 750;
+  letter-spacing: -.04em;
+  line-height: 1.1;
+  color: #173d50;
+  font-variant-numeric: tabular-nums;
+}
+#campus-stores .metric strong span { font-size: 15px; color: #8b9daa; }
+#campus-stores .priority {
+  margin: 18px 25px 0;
+  padding: 15px 19px;
+  border: 1px solid #efd8aa;
+  border-left: 4px solid #dda24b;
+  border-radius: 12px;
+  background: #fff9eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+#campus-stores .priority strong { display: block; font-size: 16px; }
+#campus-stores .priority p { margin-top: 4px; color: #6d5f49; }
+#campus-stores .eyebrow {
+  display: inline-block;
+  margin-bottom: 5px;
+  font-size: 10px;
+  line-height: 1.5;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: #66808b;
+}
+#campus-stores .shell {
+  grid-template-columns: 190px minmax(0, 1fr);
+  min-height: 440px;
+}
+#campus-stores nav {
+  gap: 6px;
+  padding: 22px 12px;
+  background: #f3f7fa;
+}
+#campus-stores nav button {
+  padding: 11px 13px;
+  border-radius: 9px;
+  transition: background-color .15s, color .15s;
+}
+#campus-stores nav button:hover { background: #e4eef3; }
+#campus-stores nav button[aria-pressed="true"] {
+  background: #174b59;
+  color: #fff;
+  box-shadow: 0 3px 9px rgba(23,75,89,.12);
+}
+#campus-stores .page { padding: 26px 29px 35px; }
+#campus-stores .sectionhead {
+  margin-bottom: 17px;
+  gap: 12px;
+}
+#campus-stores .sectionhead h2 { font-size: 23px; font-weight: 750; }
+#campus-stores .sectionhead small { margin-top: 3px; }
+#campus-stores button,
+#campus-stores input,
+#campus-stores select,
+#campus-stores textarea {
+  border-radius: 8px;
+  padding: 9px 11px;
+}
+#campus-stores button { transition: background-color .15s, border-color .15s, transform .15s; }
+#campus-stores button:hover { transform: translateY(-1px); }
+#campus-stores .primary {
+  color: #fff;
+  background: #196a73;
+  border-color: #196a73;
+}
+#campus-stores .primary:hover { background: #12545b; border-color: #12545b; }
+#campus-stores :is(button, input, textarea, select, summary):focus-visible {
+  outline: 3px solid #e4a357;
+  outline-offset: 3px;
+}
+#campus-stores .row { padding: 15px 6px; }
+#campus-stores .row strong { font-size: 14px; }
+#campus-stores .tag {
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-weight: 700;
+}
+#campus-stores .workflow-panel {
+  padding: 22px;
+  margin: 0 0 21px;
+  border-radius: 12px;
+  background: #f0f7f9;
+  border: 1px solid #cbdee4;
+}
+#campus-stores .workflow-panel h3 { font-size: 18px; margin-bottom: 9px; }
+#campus-stores .workflow-panel p { color: #466471; }
+#campus-stores .workflow-panel .form { margin-top: 18px; }
+#campus-stores .workflow-panel label span { margin-bottom: 5px; }
+#campus-stores .workflow-panel :is(input, select, textarea) {
+  min-height: 41px;
+  border-color: #b9cbd4;
+}
+#campus-stores .field-help { font-size: 12px; margin: 6px 0 14px !important; }
+#campus-stores .validation {
+  color: #a02d24 !important;
+  font-weight: 700;
+  margin-bottom: 12px !important;
+}
+#campus-stores .validation:empty { display: none; }
+#campus-stores .action-row { display: flex; gap: 9px; flex-wrap: wrap; }
+#campus-stores .loan-card {
+  padding: 18px 17px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 18px;
+  margin: 11px 0;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(30, 60, 79, .03);
+}
+#campus-stores .loan-card h3 {
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+#campus-stores .loan-details { min-width: 0; }
+#campus-stores .loan-details p { margin-top: 5px; color: #607588; }
+#campus-stores .loan-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 7px;
+  flex-shrink: 0;
+}
+#campus-stores .loan-actions button { width: 130px; }
+#campus-stores .inline-note {
+  padding: 7px 9px;
+  margin-top: 10px !important;
+  border-radius: 7px;
+  background: #fff6db;
+  color: #73582e !important;
+}
+#campus-stores .return-proof {
+  color: #237049 !important;
+  font-weight: 650;
+}
+#campus-stores .empty-state {
+  border: 1px dashed #c8d5df;
+  padding: 24px;
+  color: #647787;
+  text-align: center;
+  border-radius: 10px;
+  background: #f8fafc;
+}
+#campus-stores .activity {
+  margin: 16px 0;
+  padding: 17px;
+  border: 1px solid #d9e6ec;
+  background: #f5f9fb;
+  border-radius: 11px;
+}
+#campus-stores .activity h3 { margin-bottom: 8px; }
+#campus-stores .activity p { padding: 7px 0; border-top: 1px solid #e0e9ee; }
+#campus-stores .record {
+  padding: 16px;
+  border-radius: 8px;
+  border-left: 4px solid #2f7b80;
+}
+#campus-stores .statusbar { padding: 12px 23px; }
+#campus-stores .statusbar [role="status"] { font-weight: 600; }
+@container (max-width: 650px) {
+  #campus-stores .shell { grid-template-columns: minmax(0, 1fr); }
+  #campus-stores nav { padding: 11px; flex-direction: row; flex-wrap: wrap; }
+  #campus-stores nav button { padding: 9px 11px; }
+  #campus-stores .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #campus-stores .metric:nth-child(3) { border-left: 0; }
+  #campus-stores .metric:nth-child(n+3) { border-top: 1px solid var(--line); }
+  #campus-stores .metric { padding: 15px 18px; min-height: 80px; }
+  #campus-stores .priority { flex-wrap: wrap; margin: 12px 12px 0; }
+  #campus-stores .page { padding: 18px 14px 24px; }
+  #campus-stores .mast { padding: 22px 17px; }
+  #campus-stores .shift { padding: 15px 16px; }
+}
+@container (max-width: 420px) {
+  #campus-stores .form { grid-template-columns: 1fr; }
+  #campus-stores .loan-card { flex-direction: column; }
+  #campus-stores .loan-actions { flex-direction: row; flex-wrap: wrap; align-items: center; }
+  #campus-stores .loan-actions button { width: auto; }
+  #campus-stores .metric { padding: 14px 12px; }
+  #campus-stores .priority { padding: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #campus-stores button, #campus-stores nav button { transition: none; }
+  #campus-stores button:hover { transform: none; }
+}
