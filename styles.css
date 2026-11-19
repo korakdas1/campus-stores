@@ -272,6 +272,12 @@ body > main {
   background: light-dark(#173a49, #b8def0);
   border-color: light-dark(#173a49, #b8def0);
 }
+#campus-stores .primary.danger,
+#campus-stores .primary.danger:hover {
+  background: var(--bad-fg);
+  border-color: var(--bad-fg);
+  color: var(--paper);
+}
 /* Tier 3: quiet text actions */
 #campus-stores .ghost,
 #campus-stores .linkish {
@@ -792,13 +798,62 @@ body > main {
 #campus-stores .checkrow.stacked {
   grid-template-columns: minmax(0, 1fr);
 }
-#campus-stores .checkrow.stacked > .stillout {
-  margin-left: 28px;
-}
 #campus-stores .checkrow select {
   width: 100%;
 }
 #campus-stores .checkrow .form {
+  margin: 0;
+}
+/* Typed label check */
+#campus-stores .labelinput {
+  font:
+    700 16px/1.3 ui-monospace,
+    "Cascadia Mono",
+    Consolas,
+    monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  width: 100%;
+}
+#campus-stores .labelinput::placeholder {
+  text-transform: none;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--faint);
+}
+#campus-stores .labelstate {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 650;
+  margin: 2px 0 6px;
+}
+#campus-stores .labelstate svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+#campus-stores .labelstate.ok {
+  color: var(--ok-fg);
+}
+#campus-stores .labelstate.bad {
+  color: var(--bad-fg);
+}
+#campus-stores .labelcheck .expect {
+  flex-basis: 100%;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--faint);
+  margin-bottom: -6px;
+}
+#campus-stores .checkrow > .labelstate,
+#campus-stores .checkrow > .stillout {
+  grid-column: 1 / -1;
+}
+#campus-stores .checkrow > .labelstate {
   margin: 0;
 }
 #campus-stores .stillout {
@@ -947,9 +1002,6 @@ body > main {
   #campus-stores .slip > .actions {
     justify-content: flex-start;
   }
-  #campus-stores .checkrow > :not(.tick) {
-    margin-left: 28px;
-  }
 }
 @container (max-width:420px) {
   #campus-stores .form {
@@ -974,65 +1026,5 @@ body > main {
 @media (prefers-reduced-motion: reduce) {
   #campus-stores * {
     transition: none !important;
-  }
-}
-
-/* Guided work hierarchy: one next action, supporting details only after it. */
-#campus-stores .action-guide {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 16px 22px;
-  border-bottom: 1px solid var(--line-strong);
-  background: var(--sel-soft);
-}
-#campus-stores .action-guide-copy { min-width: 0; }
-#campus-stores .guide-kicker {
-  display: block;
-  font-size: 11px;
-  line-height: 1.3;
-  font-weight: 750;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  color: var(--sel-text);
-}
-#campus-stores .action-guide strong {
-  display: block;
-  margin-top: 3px;
-  font-size: clamp(16px, 2.1cqw, 19px);
-  line-height: 1.24;
-  letter-spacing: -.02em;
-  color: var(--ink);
-}
-#campus-stores .action-guide p {
-  margin-top: 4px;
-  max-width: 65ch;
-  font-size: 12.5px;
-  color: var(--quiet);
-}
-#campus-stores .action-guide button {
-  min-width: 166px;
-  min-height: 44px;
-  padding: 10px 17px;
-  flex-shrink: 0;
-  border-radius: 9px;
-}
-#campus-stores .panel.check input[name="assetId"] {
-  width: 100%;
-  font-weight: 750;
-  letter-spacing: .045em;
-  text-transform: uppercase;
-  font-variant-numeric: tabular-nums;
-}
-@container (max-width: 570px) {
-  #campus-stores .action-guide {
-    padding: 15px 14px;
-    align-items: stretch;
-    flex-direction: column;
-    gap: 12px;
-  }
-  #campus-stores .action-guide button {
-    width: 100%;
   }
 }

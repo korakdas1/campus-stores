@@ -131,9 +131,9 @@
                 expect.
               </p>
               <ul>
-                <li><b>Take a return:</b> anything not back needs a who and a when.</li>
+                <li><b>Take a return:</b> type each unit’s ID; anything not back needs a who and a when.</li>
                 <li><b>Overdue</b> goes red and to the top.</li>
-                <li><b>Record return</b> checks the label before closing.</li>
+                <li><b>Record return</b> closes only when the typed label ID matches; a wrong unit is flagged.</li>
                 <li>Also: one-step kit issue, inline errors, Undo.</li>
               </ul>
               <p>Kept: one slip per unit, and every issuing rule.</p>
@@ -163,14 +163,6 @@
           </div>
           <button type="button" data-action="advance"></button>
         </aside>
-        <section class="action-guide" aria-label="Suggested next action">
-          <div class="action-guide-copy">
-            <span class="guide-kicker" data-guide-kicker></span>
-            <strong data-guide-title></strong>
-            <p data-guide-description></p>
-          </div>
-          <button type="button" class="primary" data-action="guide" data-guide-button></button>
-        </section>
         <div class="shell">
           <nav aria-label="Store records" data-nav></nav>
           <section
